@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Chess-AI — Your Next Move Starts Here</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="./chessai.css" />
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- LEFT HERO -->
+        <div class="hero">
+            <div class="board-bg" id="boardBg"></div>
+
+            <nav class="hero-nav">
+                <a href="#" class="logo">
+                    <span class="logo-knight" aria-hidden="true">
+                        <!-- 3D Knight SVG -->
+                        <svg viewBox="0 0 460 520" xmlns="http://www.w3.org/2000/svg" class="knight-svg">
+                            <defs>
+                                <linearGradient id="lbodyMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#1de9a0" />
+                                    <stop offset="55%" style="stop-color:#0e9e6a" />
+                                    <stop offset="100%" style="stop-color:#06533a" />
+                                </linearGradient>
+                                <linearGradient id="lbodyLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#04301f" />
+                                    <stop offset="100%" style="stop-color:#076644" />
+                                </linearGradient>
+                                <linearGradient id="lbodyTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#3fffc2" />
+                                    <stop offset="100%" style="stop-color:#12c98a" />
+                                </linearGradient>
+                                <linearGradient id="lneckMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#12c98a" />
+                                    <stop offset="100%" style="stop-color:#065c3e" />
+                                </linearGradient>
+                                <linearGradient id="lbaseMain" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#0e9e6a" />
+                                    <stop offset="100%" style="stop-color:#042e1e" />
+                                </linearGradient>
+                                <linearGradient id="lmaneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#0a0a12" />
+                                    <stop offset="100%" style="stop-color:#1a1a2e" />
+                                </linearGradient>
+                                <linearGradient id="lsnoutMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#1de9a0" />
+                                    <stop offset="100%" style="stop-color:#087d54" />
+                                </linearGradient>
+                                <linearGradient id="leyeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#e2e8f0" />
+                                    <stop offset="100%" style="stop-color:#94a3b8" />
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Shadow -->
+                            <ellipse cx="230" cy="494" rx="130" ry="12" fill="#000" opacity="0.3" />
+
+                            <!-- BASE -->
+                            <ellipse cx="230" cy="456" rx="118" ry="22" fill="#0a6644" />
+                            <path d="M112 456 L112 478 Q230 496 348 478 L348 456 Q230 474 112 456Z"
+                                fill="url(#lbaseMain)" />
+                            <path d="M112 456 L112 478 L90 470 L90 448Z" fill="#053d28" />
+                            <ellipse cx="210" cy="453" rx="60" ry="8" fill="#18e89c" opacity="0.18" />
+
+                            <!-- NECK -->
+                            <path d="M168 380 L168 458 L138 452 L138 374Z" fill="#053d28" />
+                            <path d="M168 380 L168 458 L292 458 L292 380Z" fill="url(#lneckMain)" />
+                            <path d="M292 380 L292 458 L320 452 L320 374Z" fill="#076644" />
+                            <path d="M138 374 L168 380 L292 380 L320 374 L290 368 L168 368Z" fill="url(#lbodyTop)" />
+
+                            <!-- BODY -->
+                            <path d="M140 200 L140 380 L168 386 L168 206Z" fill="url(#lbodyLeft)" />
+                            <path d="M168 206 L168 386 L320 386 L320 206Z" fill="url(#lbodyMain)" />
+                            <path d="M320 206 L320 386 L346 376 L346 196Z" fill="#076644" />
+                            <path d="M140 200 L168 206 L320 206 L346 196 L316 188 L168 188Z" fill="url(#lbodyTop)" />
+
+                            <!-- SNOUT -->
+                            <path d="M190 330 L190 370 L270 370 L270 330Z" fill="#065c3e" />
+                            <path d="M168 310 L168 370 L190 370 L190 310Z" fill="url(#lsnoutMain)" />
+                            <path d="M168 310 L190 310 L270 310 L250 298 L152 298Z" fill="url(#lbodyTop)" />
+                            <path d="M190 310 L270 310 L270 330 L190 330Z" fill="#0a8a5c" />
+                            <ellipse cx="178" cy="348" rx="6" ry="4" fill="#032a1a" opacity="0.7" />
+
+                            <!-- FOREHEAD -->
+                            <path d="M168 190 Q200 148 260 155 Q300 158 320 190 L320 210 L168 210Z"
+                                fill="url(#lbodyMain)" />
+                            <path d="M168 190 Q162 168 168 155 L168 190Z" fill="#04301f" />
+                            <path
+                                d="M146 196 L168 188 Q202 148 262 154 Q302 156 320 188 L346 180 Q320 142 258 138 Q202 134 162 172 L140 188Z"
+                                fill="url(#lbodyTop)" />
+
+                            <!-- MANE -->
+                            <path
+                                d="M270 155 Q320 120 350 80 Q330 90 310 88 Q330 60 348 42 Q310 52 286 55 Q308 30 318 14 Q280 30 260 38 Q270 22 266 10 Q238 28 230 42 Q222 26 220 14 Q200 28 206 40 Q186 30 154 16 Q162 34 158 52 Q130 38 106 48 Q120 68 112 86 Q92 84 74 96 Q108 110 118 148 Q140 130 168 148 Q168 142 168 136 Q194 122 230 122 Q258 122 270 138 Z"
+                                fill="url(#lmaneGrad)" />
+
+                            <!-- EARS -->
+                            <path d="M202 140 L216 90 L230 140Z" fill="#0a0a12" />
+                            <path d="M230 140 L246 92 L262 142Z" fill="#111122" />
+                            <path d="M208 138 L218 104 L226 138Z" fill="#1a1a2e" opacity="0.6" />
+
+                            <!-- EYE -->
+                            <ellipse cx="234" cy="252" rx="28" ry="24" fill="#021a10" />
+                            <ellipse cx="234" cy="252" rx="20" ry="18" fill="url(#leyeGrad)" />
+                            <ellipse cx="236" cy="254" rx="10" ry="11" fill="#070714" />
+                            <ellipse cx="230" cy="247" rx="5" ry="4" fill="#fff" opacity="0.8" />
+                            <ellipse cx="240" cy="256" rx="2" ry="2" fill="#fff" opacity="0.4" />
+
+                            <!-- BROW -->
+                            <path d="M206 228 Q234 218 264 226 L260 234 Q234 226 208 236Z" fill="#04301f" />
+
+                            <!-- CHEEK HIGHLIGHT -->
+                            <path d="M280 260 Q310 240 320 280 Q308 310 290 320 L270 310 Q288 288 280 260Z"
+                                fill="#14d48e" opacity="0.22" />
+
+                            <!-- FOREHEAD HIGHLIGHT -->
+                            <path d="M200 188 Q230 170 258 182 Q242 174 230 176 Q216 174 200 188Z" fill="#3fffc2"
+                                opacity="0.35" />
+
+                            <!-- RIM LIGHT -->
+                            <path d="M168 206 L168 386 L172 386 L172 206Z" fill="#22f0a8" opacity="0.25" />
+
+                            <!-- AO UNDER CHIN -->
+                            <ellipse cx="210" cy="375" rx="55" ry="8" fill="#000" opacity="0.28" />
+                        </svg>
+                    </span>
+                    <span class="logo-name">Chess<span>-AI</span></span>
+                </a>
+            </nav>
+
+            <div class="hero-body">
+                <div class="hero-eyebrow">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    Cebu School of Chess
+                </div>
+                <h1 class="hero-headline">Your Next Move<br>Starts Here.</h1>
+                <p class="hero-sub">Sign in to continue your chess journey, or create an account to explore the power of
+                    Chess-AI.</p>
+            </div>
+
+            <!-- Hero knight — large decorative version -->
+            <div class="hero-knight-display" aria-hidden="true">
+                <svg viewBox="0 0 460 520" xmlns="http://www.w3.org/2000/svg" class="hero-knight-svg">
+                    <defs>
+                        <linearGradient id="hbodyMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1de9a0" />
+                            <stop offset="55%" style="stop-color:#0e9e6a" />
+                            <stop offset="100%" style="stop-color:#06533a" />
+                        </linearGradient>
+                        <linearGradient id="hbodyLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#04301f" />
+                            <stop offset="100%" style="stop-color:#076644" />
+                        </linearGradient>
+                        <linearGradient id="hbodyTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#3fffc2" />
+                            <stop offset="100%" style="stop-color:#12c98a" />
+                        </linearGradient>
+                        <linearGradient id="hneckMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#12c98a" />
+                            <stop offset="100%" style="stop-color:#065c3e" />
+                        </linearGradient>
+                        <linearGradient id="hbaseMain" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0e9e6a" />
+                            <stop offset="100%" style="stop-color:#042e1e" />
+                        </linearGradient>
+                        <linearGradient id="hmaneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0a0a12" />
+                            <stop offset="100%" style="stop-color:#1a1a2e" />
+                        </linearGradient>
+                        <linearGradient id="hsnoutMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1de9a0" />
+                            <stop offset="100%" style="stop-color:#087d54" />
+                        </linearGradient>
+                        <linearGradient id="heyeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#e2e8f0" />
+                            <stop offset="100%" style="stop-color:#94a3b8" />
+                        </linearGradient>
+                        <filter id="hglow">
+                            <feGaussianBlur stdDeviation="8" result="blur" />
+                            <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <ellipse cx="230" cy="494" rx="130" ry="12" fill="#000" opacity="0.35" />
+                    <ellipse cx="230" cy="456" rx="118" ry="22" fill="#0a6644" />
+                    <path d="M112 456 L112 478 Q230 496 348 478 L348 456 Q230 474 112 456Z" fill="url(#hbaseMain)" />
+                    <path d="M112 456 L112 478 L90 470 L90 448Z" fill="#053d28" />
+                    <ellipse cx="210" cy="453" rx="60" ry="8" fill="#18e89c" opacity="0.18" />
+                    <path d="M168 380 L168 458 L138 452 L138 374Z" fill="#053d28" />
+                    <path d="M168 380 L168 458 L292 458 L292 380Z" fill="url(#hneckMain)" />
+                    <path d="M292 380 L292 458 L320 452 L320 374Z" fill="#076644" />
+                    <path d="M138 374 L168 380 L292 380 L320 374 L290 368 L168 368Z" fill="url(#hbodyTop)" />
+                    <path d="M140 200 L140 380 L168 386 L168 206Z" fill="url(#hbodyLeft)" />
+                    <path d="M168 206 L168 386 L320 386 L320 206Z" fill="url(#hbodyMain)" />
+                    <path d="M320 206 L320 386 L346 376 L346 196Z" fill="#076644" />
+                    <path d="M140 200 L168 206 L320 206 L346 196 L316 188 L168 188Z" fill="url(#hbodyTop)" />
+                    <path d="M190 330 L190 370 L270 370 L270 330Z" fill="#065c3e" />
+                    <path d="M168 310 L168 370 L190 370 L190 310Z" fill="url(#hsnoutMain)" />
+                    <path d="M168 310 L190 310 L270 310 L250 298 L152 298Z" fill="url(#hbodyTop)" />
+                    <path d="M190 310 L270 310 L270 330 L190 330Z" fill="#0a8a5c" />
+                    <ellipse cx="178" cy="348" rx="6" ry="4" fill="#032a1a" opacity="0.7" />
+                    <path d="M168 190 Q200 148 260 155 Q300 158 320 190 L320 210 L168 210Z" fill="url(#hbodyMain)" />
+                    <path d="M168 190 Q162 168 168 155 L168 190Z" fill="#04301f" />
+                    <path
+                        d="M146 196 L168 188 Q202 148 262 154 Q302 156 320 188 L346 180 Q320 142 258 138 Q202 134 162 172 L140 188Z"
+                        fill="url(#hbodyTop)" />
+                    <path
+                        d="M270 155 Q320 120 350 80 Q330 90 310 88 Q330 60 348 42 Q310 52 286 55 Q308 30 318 14 Q280 30 260 38 Q270 22 266 10 Q238 28 230 42 Q222 26 220 14 Q200 28 206 40 Q186 30 154 16 Q162 34 158 52 Q130 38 106 48 Q120 68 112 86 Q92 84 74 96 Q108 110 118 148 Q140 130 168 148 Q168 142 168 136 Q194 122 230 122 Q258 122 270 138 Z"
+                        fill="url(#hmaneGrad)" />
+                    <path d="M202 140 L216 90 L230 140Z" fill="#0a0a12" />
+                    <path d="M230 140 L246 92 L262 142Z" fill="#111122" />
+                    <path d="M208 138 L218 104 L226 138Z" fill="#1a1a2e" opacity="0.6" />
+                    <ellipse cx="234" cy="252" rx="28" ry="24" fill="#021a10" />
+                    <ellipse cx="234" cy="252" rx="20" ry="18" fill="url(#heyeGrad)" />
+                    <ellipse cx="236" cy="254" rx="10" ry="11" fill="#070714" />
+                    <ellipse cx="230" cy="247" rx="5" ry="4" fill="#fff" opacity="0.8" />
+                    <ellipse cx="240" cy="256" rx="2" ry="2" fill="#fff" opacity="0.4" />
+                    <path d="M206 228 Q234 218 264 226 L260 234 Q234 226 208 236Z" fill="#04301f" />
+                    <path d="M280 260 Q310 240 320 280 Q308 310 290 320 L270 310 Q288 288 280 260Z" fill="#14d48e"
+                        opacity="0.22" />
+                    <path d="M200 188 Q230 170 258 182 Q242 174 230 176 Q216 174 200 188Z" fill="#3fffc2"
+                        opacity="0.35" />
+                    <path d="M168 206 L168 386 L172 386 L172 206Z" fill="#22f0a8" opacity="0.25" />
+                    <ellipse cx="210" cy="375" rx="55" ry="8" fill="#000" opacity="0.28" />
+
+                    <!-- Glow ring under piece -->
+                    <ellipse cx="230" cy="490" rx="90" ry="8" fill="#10b981" opacity="0.18" filter="url(#hglow)" />
+                </svg>
+            </div>
+
+            <blockquote class="hero-quote">
+                <p class="hero-quote-text">"Chess is life in miniature. Chess is a struggle, chess battles."</p>
+                <footer class="hero-quote-author">— Garry Kasparov, World Chess Champion</footer>
+            </blockquote>
+        </div>
+
+        <!-- RIGHT FORM PANEL -->
+        <div class="form-panel">
+            <div class="form-card">
+
+                <!-- Mobile logo -->
+                <div class="mobile-logo">
+                    <span class="logo-knight logo-knight--sm" aria-hidden="true">
+                        <svg viewBox="0 0 460 520" xmlns="http://www.w3.org/2000/svg" class="knight-svg">
+                            <defs>
+                                <linearGradient id="mbodyMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#1de9a0" />
+                                    <stop offset="55%" style="stop-color:#0e9e6a" />
+                                    <stop offset="100%" style="stop-color:#06533a" />
+                                </linearGradient>
+                                <linearGradient id="mbodyLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#04301f" />
+                                    <stop offset="100%" style="stop-color:#076644" />
+                                </linearGradient>
+                                <linearGradient id="mbodyTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#3fffc2" />
+                                    <stop offset="100%" style="stop-color:#12c98a" />
+                                </linearGradient>
+                                <linearGradient id="mmaneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#0a0a12" />
+                                    <stop offset="100%" style="stop-color:#1a1a2e" />
+                                </linearGradient>
+                                <linearGradient id="meyeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#e2e8f0" />
+                                    <stop offset="100%" style="stop-color:#94a3b8" />
+                                </linearGradient>
+                            </defs>
+                            <ellipse cx="230" cy="456" rx="118" ry="22" fill="#0a6644" />
+                            <path d="M112 456 L112 478 Q230 496 348 478 L348 456 Q230 474 112 456Z" fill="#0e9e6a" />
+                            <path d="M168 380 L168 458 L138 452 L138 374Z" fill="#053d28" />
+                            <path d="M168 380 L168 458 L292 458 L292 380Z" fill="#0e9e6a" />
+                            <path d="M292 380 L292 458 L320 452 L320 374Z" fill="#076644" />
+                            <path d="M138 374 L168 380 L292 380 L320 374 L290 368 L168 368Z" fill="url(#mbodyTop)" />
+                            <path d="M140 200 L140 380 L168 386 L168 206Z" fill="url(#mbodyLeft)" />
+                            <path d="M168 206 L168 386 L320 386 L320 206Z" fill="url(#mbodyMain)" />
+                            <path d="M320 206 L320 386 L346 376 L346 196Z" fill="#076644" />
+                            <path d="M140 200 L168 206 L320 206 L346 196 L316 188 L168 188Z" fill="url(#mbodyTop)" />
+                            <path d="M168 310 L168 370 L270 370 L270 310Z" fill="#065c3e" />
+                            <path d="M168 310 L190 310 L270 310 L250 298 L152 298Z" fill="url(#mbodyTop)" />
+                            <path d="M168 190 Q200 148 260 155 Q300 158 320 190 L320 210 L168 210Z"
+                                fill="url(#mbodyMain)" />
+                            <path
+                                d="M146 196 L168 188 Q202 148 262 154 Q302 156 320 188 L346 180 Q320 142 258 138 Q202 134 162 172 L140 188Z"
+                                fill="url(#mbodyTop)" />
+                            <path
+                                d="M270 155 Q320 120 350 80 Q330 90 310 88 Q330 60 348 42 Q310 52 286 55 Q308 30 318 14 Q280 30 260 38 Q270 22 266 10 Q238 28 230 42 Q222 26 220 14 Q200 28 206 40 Q186 30 154 16 Q162 34 158 52 Q130 38 106 48 Q120 68 112 86 Q92 84 74 96 Q108 110 118 148 Q140 130 168 148 Q168 142 168 136 Q194 122 230 122 Q258 122 270 138Z"
+                                fill="url(#mmaneGrad)" />
+                            <path d="M202 140 L216 90 L230 140Z" fill="#0a0a12" />
+                            <path d="M230 140 L246 92 L262 142Z" fill="#111122" />
+                            <ellipse cx="234" cy="252" rx="28" ry="24" fill="#021a10" />
+                            <ellipse cx="234" cy="252" rx="20" ry="18" fill="url(#meyeGrad)" />
+                            <ellipse cx="236" cy="254" rx="10" ry="11" fill="#070714" />
+                            <ellipse cx="230" cy="247" rx="5" ry="4" fill="#fff" opacity="0.8" />
+                        </svg>
+                    </span>
+                    <span class="logo-name">Chess<span style="color:var(--emerald)">-AI</span></span>
+                </div>
+
+                <!-- Tab switcher -->
+                <div class="tab-bar" role="tablist">
+                    <button class="tab-btn active" id="tabSignIn" role="tab" aria-selected="true"
+                        aria-controls="viewSignIn" onclick="switchTab('signin')">Sign In</button>
+                    <button class="tab-btn" id="tabSignUp" role="tab" aria-selected="false" aria-controls="viewSignUp"
+                        onclick="switchTab('signup')">Sign Up</button>
+                </div>
+
+                <!-- SIGN IN -->
+                <div class="form-view active" id="viewSignIn" role="tabpanel">
+                    <h2 class="form-title">Welcome back</h2>
+                    <p class="form-desc">Sign in to your Chess-AI account</p>
+
+                    <div class="field">
+                        <label for="siEmail">Email address</label>
+                        <div class="input-wrap">
+                            <input type="email" id="siEmail" class="no-icon" placeholder="you@example.com"
+                                autocomplete="email" />
+                        </div>
+                        <p class="field-msg" id="siEmailMsg" role="alert"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="siPassword">Password</label>
+                        <div class="input-wrap">
+                            <input type="password" id="siPassword" placeholder="••••••••"
+                                autocomplete="current-password" />
+                            <button class="eye-btn" onclick="toggleEye('siPassword', 'siEye')"
+                                aria-label="Show password" id="siEyeBtn">
+                                <svg id="siEye" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="field-msg" id="siPasswordMsg" role="alert"></p>
+                    </div>
+
+                    <div class="check-row">
+                        <label class="check-label">
+                            <input type="checkbox" id="rememberMe" />
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-link" onclick="openForgot(event)">Forgot password?</a>
+                    </div>
+
+                    <button class="btn-primary" id="btnSignIn" onclick="handleSignIn()">
+                        <span class="btn-text">Sign in</span>
+                        <span class="btn-spinner" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <circle cx="9" cy="9" r="7" stroke="rgba(4,13,8,0.3)" stroke-width="2.5" />
+                                <path d="M9 2a7 7 0 0 1 7 7" stroke="#040d08" stroke-width="2.5"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </span>
+                    </button>
+
+                    <p class="switch-note">
+                        Don't have an account?
+                        <a href="#" onclick="switchTab('signup'); return false;">Create one</a>
+                    </p>
+                </div>
+
+                <!-- SIGN UP -->
+                <div class="form-view" id="viewSignUp" role="tabpanel">
+                    <h2 class="form-title">Create your account</h2>
+                    <p class="form-desc">Join Chess-AI and start playing smarter</p>
+
+                    <div class="field">
+                        <label for="suName">Full name</label>
+                        <div class="input-wrap">
+                            <input type="text" id="suName" class="no-icon" placeholder="Your name"
+                                autocomplete="name" />
+                        </div>
+                        <p class="field-msg" id="suNameMsg" role="alert"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="suEmail">Email address</label>
+                        <div class="input-wrap">
+                            <input type="email" id="suEmail" class="no-icon" placeholder="you@example.com"
+                                autocomplete="email" />
+                        </div>
+                        <p class="field-msg" id="suEmailMsg" role="alert"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="suPassword">Password</label>
+                        <div class="input-wrap">
+                            <input type="password" id="suPassword" placeholder="Min. 8 characters"
+                                autocomplete="new-password" oninput="onSuPasswordInput()" />
+                            <button class="eye-btn" onclick="toggleEye('suPassword', 'suEye')"
+                                aria-label="Show password" id="suEyeBtn">
+                                <svg id="suEye" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="field-msg" id="suPasswordMsg" role="alert"></p>
+                        <div class="strength-wrap" id="strengthWrap">
+                            <div class="strength-bars">
+                                <div class="strength-bar" id="sb1"></div>
+                                <div class="strength-bar" id="sb2"></div>
+                                <div class="strength-bar" id="sb3"></div>
+                                <div class="strength-bar" id="sb4"></div>
+                            </div>
+                            <span class="strength-label" id="strengthLabel"></span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="suConfirm">Confirm password</label>
+                        <div class="input-wrap">
+                            <input type="password" id="suConfirm" placeholder="Re-enter your password"
+                                autocomplete="new-password" oninput="onSuConfirmInput()" />
+                            <button class="eye-btn" onclick="toggleEye('suConfirm', 'suConfirmEye')"
+                                aria-label="Show confirm password" id="suConfirmEyeBtn">
+                                <svg id="suConfirmEye" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="field-msg" id="suConfirmMsg" role="alert"></p>
+                    </div>
+
+                    <button class="btn-primary" id="btnSignUp" onclick="handleSignUp()">
+                        <span class="btn-text">Create account</span>
+                        <span class="btn-spinner" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <circle cx="9" cy="9" r="7" stroke="rgba(4,13,8,0.3)" stroke-width="2.5" />
+                                <path d="M9 2a7 7 0 0 1 7 7" stroke="#040d08" stroke-width="2.5"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </span>
+                    </button>
+
+                    <p class="switch-note">
+                        Already have an account?
+                        <a href="#" onclick="switchTab('signin'); return false;">Sign in</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div class="modal-overlay" id="forgotOverlay" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
+        <div class="modal">
+            <h3 class="modal-title" id="forgotTitle">Reset your password</h3>
+            <p class="modal-desc">Enter the email address associated with your account and we'll send you a reset link.
+            </p>
+            <div class="field">
+                <label for="forgotEmail">Email address</label>
+                <div class="input-wrap">
+                    <input type="email" id="forgotEmail" class="no-icon" placeholder="you@example.com"
+                        autocomplete="email" />
+                </div>
+                <p class="field-msg" id="forgotEmailMsg" role="alert"></p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-ghost" onclick="closeForgot()">Cancel</button>
+                <button class="btn-primary-sm" onclick="handleForgot()">Send reset link</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./chessai.js"></script>
+</body>
+
+</html>
