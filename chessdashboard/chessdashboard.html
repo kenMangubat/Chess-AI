@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Chess-AI — Dashboard</title>
+    <title>ChessAI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -36,7 +36,9 @@
             --transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -45,7 +47,7 @@
         body {
             min-height: 100vh;
             background-color: var(--bg);
-            background-image: 
+            background-image:
                 radial-gradient(ellipse at 80% 0%, rgba(16, 185, 129, 0.09) 0%, transparent 60%),
                 radial-gradient(ellipse at 20% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
                 radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.6) 0%, transparent 100%);
@@ -242,6 +244,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            text-decoration: none;
         }
 
         .btn-logout:hover {
@@ -377,9 +380,9 @@
             flex-direction: column;
             position: relative;
             cursor: pointer;
-            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
-                        box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
-                        border-color 0.28s ease;
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.28s ease;
             box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.6);
             text-decoration: none;
             color: inherit;
@@ -389,8 +392,8 @@
         .mode-card:hover {
             transform: translateY(-8px);
             border-color: var(--card-border-hover);
-            box-shadow: 0 24px 44px -12px rgba(0, 0, 0, 0.8), 
-                        0 0 32px -4px rgba(16, 185, 129, 0.25);
+            box-shadow: 0 24px 44px -12px rgba(0, 0, 0, 0.8),
+                0 0 32px -4px rgba(16, 185, 129, 0.25);
         }
 
         /* TOP PICTURE AREA */
@@ -418,12 +421,10 @@
         .mode-image-gradient {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                180deg,
-                rgba(13, 13, 18, 0.05) 0%,
-                rgba(13, 13, 18, 0.4) 60%,
-                rgba(24, 24, 38, 1) 100%
-            );
+            background: linear-gradient(180deg,
+                    rgba(13, 13, 18, 0.05) 0%,
+                    rgba(13, 13, 18, 0.4) 60%,
+                    rgba(24, 24, 38, 1) 100%);
             pointer-events: none;
         }
 
@@ -724,7 +725,8 @@
             color: var(--text);
         }
 
-        .form-select, .form-input {
+        .form-select,
+        .form-input {
             width: 100%;
             padding: 10px 14px;
             background: var(--surface);
@@ -737,7 +739,8 @@
             transition: var(--transition);
         }
 
-        .form-select:focus, .form-input:focus {
+        .form-select:focus,
+        .form-input:focus {
             border-color: var(--emerald);
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         }
@@ -760,6 +763,959 @@
         .settings-toggle-desc {
             font-size: 12px;
             color: var(--text-muted);
+        }
+
+        .scout-overlay {
+            padding: 12px;
+            background: rgba(4, 6, 12, 0.86);
+        }
+
+        .scout-shell {
+            width: min(1500px, 100%);
+            height: min(820px, calc(100dvh - 32px));
+            max-width: none;
+            --openingtree-crop-top: 58px;
+            background: #303236;
+            border: 1px solid #484b50;
+            border-radius: 8px;
+            color: #edf0f4;
+            transform: translateY(20px) scale(0.985);
+        }
+
+        .modal-overlay.open .scout-shell {
+            transform: translateY(0) scale(1);
+        }
+
+        .scout-workspace {
+            min-height: 0;
+            flex: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(330px, 0.95fr);
+            gap: 18px;
+            padding: 16px 18px;
+            overflow: hidden;
+        }
+
+        .scout-intro {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 14px;
+            padding: clamp(20px, 5vw, 56px);
+            overflow: auto;
+            background:
+                radial-gradient(ellipse at top left, rgba(16, 185, 129, 0.12), transparent 55%),
+                #303236;
+        }
+
+        .scout-intro[hidden],
+        .scout-workspace[hidden],
+        .openingtree-embed[hidden] {
+            display: none !important;
+        }
+
+        .scout-intro-badge {
+            color: #69d6ad;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .scout-intro h3 {
+            margin: 0;
+            color: #fff;
+            font-family: inherit;
+            font-size: clamp(22px, 4vw, 32px);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .scout-intro p,
+        .scout-intro li {
+            max-width: 720px;
+            color: #d4d7db;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .scout-intro p,
+        .scout-intro ol {
+            margin: 0;
+        }
+
+        .scout-intro ol {
+            padding-left: 22px;
+        }
+
+        .scout-intro-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .scout-intro-actions a,
+        .scout-intro-actions button,
+        .openingtree-open-link {
+            min-height: 40px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 9px 14px;
+            border: 1px solid #62666b;
+            border-radius: 5px;
+            background: #414348;
+            color: #f1f3f5;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .scout-intro-actions a:hover,
+        .scout-intro-actions button:hover,
+        .openingtree-open-link:hover {
+            background: #4c5055;
+        }
+
+        .scout-intro-actions .scout-intro-continue {
+            border-color: #10b981;
+            background: #087f5b;
+            color: #fff;
+        }
+
+        .scout-intro-note {
+            max-width: 720px;
+            padding: 10px 12px;
+            border-left: 3px solid #c59a52;
+            background: rgba(197, 154, 82, .1);
+            color: #ddd0b7;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .openingtree-embed {
+            position: relative;
+            min-width: 0;
+            min-height: 0;
+            flex: 1;
+            overflow: hidden;
+            background: #303236;
+        }
+
+        .openingtree-embed[hidden] {
+            display: none !important;
+        }
+
+        .openingtree-embed iframe {
+            position: absolute;
+            top: calc(-1 * var(--openingtree-crop-top));
+            left: 0;
+            display: block;
+            width: 100%;
+            height: calc(100% + var(--openingtree-crop-top));
+            border: 0;
+            background: #303236;
+        }
+
+        .openingtree-open-link {
+            position: absolute;
+            z-index: 1;
+            top: 8px;
+            right: 42px;
+            min-height: 30px;
+            padding: 5px 9px;
+            border-color: rgba(255, 255, 255, .2);
+            background: rgba(31, 33, 36, .92);
+            font-size: 11px;
+        }
+
+        .scout-board-layout {
+            --scout-board-fr: 2.2fr;
+            --scout-moves-fr: 1fr;
+            min-width: 0;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(220px, var(--scout-board-fr)) 8px minmax(150px, var(--scout-moves-fr));
+            gap: 8px;
+        }
+
+        .scout-board-side {
+            min-width: 0;
+            min-height: 0;
+            display: grid;
+            place-items: center;
+        }
+
+        .scout-resize-handle {
+            width: 8px;
+            align-self: stretch;
+            border: 0;
+            border-radius: 4px;
+            background: transparent;
+            cursor: col-resize;
+            touch-action: none;
+        }
+
+        .scout-resize-handle::after {
+            content: "";
+            display: block;
+            width: 2px;
+            height: 100%;
+            margin: 0 auto;
+            border-radius: 2px;
+            background: #66686c;
+            transition: background-color 120ms ease;
+        }
+
+        .scout-resize-handle:hover::after,
+        .scout-resize-handle:focus-visible::after,
+        .scout-resize-handle.resizing::after {
+            background: #86b9e6;
+        }
+
+        .scout-move-panel {
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            color: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .scout-move-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .scout-move-controls button {
+            border: 0;
+            padding: 4px 2px;
+            background: transparent;
+            color: #e5e7eb;
+            font: inherit;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .scout-move-controls button:hover:not(:disabled) {
+            color: #fff;
+        }
+
+        .scout-move-controls button:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        .scout-opening-name {
+            min-height: 24px;
+            margin-bottom: 4px;
+            padding: 6px 9px;
+            background: #343330;
+            color: #d8d7d3;
+            font-size: 12px;
+        }
+
+        .scout-move-list {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            background: #242321;
+            scrollbar-width: thin;
+        }
+
+        .scout-move-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            color: #d4d2ce;
+            font-size: 14px;
+        }
+
+        .scout-move-table th,
+        .scout-move-table td {
+            height: 32px;
+            padding: 3px 8px;
+            border: 0;
+            text-align: left;
+        }
+
+        .scout-move-table th {
+            width: 34px;
+            background: #302f2c;
+            color: #999791;
+            font-weight: 400;
+        }
+
+        .scout-move-table td {
+            background: #242321;
+            color: #d4d2ce;
+        }
+
+        .scout-move-cell {
+            width: 100%;
+            min-height: 26px;
+            padding: 3px 6px;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 100ms ease, color 100ms ease;
+        }
+
+        .scout-move-cell:hover,
+        .scout-move-cell.active {
+            background: #447fae;
+            color: #fff;
+        }
+
+        .scout-move-table tr:nth-child(even) td {
+            background: #2b2a27;
+        }
+
+        .scout-move-table tr:nth-child(even) .scout-move-cell.active,
+        .scout-move-cell:hover {
+            background: #447fae;
+        }
+
+        .scout-move-empty {
+            padding: 12px;
+            color: #aaa8a2;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .scout-board {
+            width: min(100%, 660px, calc(100dvh - 180px));
+            aspect-ratio: 1;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .scout-square {
+            position: relative;
+            display: grid;
+            place-items: center;
+            padding: 0;
+            border: 0;
+            color: inherit;
+            font: inherit;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .scout-square.scout-selected {
+            box-shadow: inset 0 0 0 4px rgba(114, 182, 93, 0.9);
+        }
+
+        .scout-square.scout-dragging {
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .scout-square.scout-dragging .scout-piece {
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.42));
+            will-change: transform;
+        }
+
+        .scout-square.scout-legal-destination::after {
+            content: "";
+            width: 28%;
+            height: 28%;
+            border-radius: 50%;
+            background: rgba(30, 80, 52, 0.42);
+            pointer-events: none;
+        }
+
+        .scout-square.scout-capture-destination::after {
+            content: "";
+            position: absolute;
+            inset: 5%;
+            border: 4px solid rgba(30, 80, 52, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .scout-coordinate {
+            position: absolute;
+            left: 3px;
+            bottom: 1px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: clamp(8px, 1vw, 11px);
+            font-weight: 600;
+            line-height: 1;
+            opacity: 0.8;
+        }
+
+        .scout-coordinate.file {
+            right: 3px;
+            left: auto;
+        }
+
+        .scout-square.light {
+            background: #edd9bd;
+        }
+
+        .scout-square.dark {
+            background: #ae8b70;
+        }
+
+        .scout-board.scout-light-board .scout-square.light {
+            background: #f0f0e8;
+        }
+
+        .scout-board.scout-light-board .scout-square.dark {
+            background: #82a66a;
+        }
+
+        .scout-piece {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .scout-move-cell,
+            .scout-resize-handle::after {
+                transition: none;
+            }
+        }
+
+        .scout-square.light .scout-coordinate {
+            color: #ae8b70;
+        }
+
+        .scout-square.dark .scout-coordinate {
+            color: #edd9bd;
+        }
+
+        .scout-panel {
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            scrollbar-width: thin;
+        }
+
+        .scout-tabs {
+            min-height: 34px;
+            display: flex;
+            align-items: stretch;
+            gap: 4px;
+            border-bottom: 1px solid #707276;
+            margin-bottom: 6px;
+        }
+
+        .scout-tab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 4px 10px;
+            border: 1px solid transparent;
+            border-radius: 5px 5px 0 0;
+            background: transparent;
+            color: #c7c9cc;
+            cursor: pointer;
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .scout-tab:hover,
+        .scout-tab.active {
+            color: #fff;
+            background: #414348;
+        }
+
+        .scout-tab.active {
+            border-color: #92959a;
+        }
+
+        .scout-tab svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .scout-tab-panel[hidden] {
+            display: none;
+        }
+
+        .scout-tab-panel {
+            min-height: 0;
+            flex: 1;
+            overflow: auto;
+            scrollbar-width: thin;
+        }
+
+        .scout-panel-heading {
+            margin: 10px 0 8px;
+            color: #f4f4f2;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .scout-field-label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #bec2c7;
+            font-size: 12px;
+        }
+
+        .scout-book-filters {
+            align-items: end;
+        }
+
+        .scout-book-refresh {
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .scout-book-summary strong {
+            color: #fff;
+        }
+
+        .scout-book-row-count {
+            white-space: nowrap;
+        }
+
+        .scout-book-empty {
+            padding: 12px 4px;
+            color: #bec2c7;
+            font-size: 12px;
+        }
+
+        .scout-control-button {
+            min-height: 42px;
+        }
+
+        @media (max-width: 700px) {
+            .scout-tabs {
+                gap: 1px;
+            }
+
+            .scout-tab {
+                flex: 1;
+                min-width: 0;
+                padding: 4px 5px;
+            }
+
+            .scout-tab span {
+                display: none;
+            }
+
+            .scout-book-filters,
+            .scout-auth-actions {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .scout-auth-card,
+        .scout-info-card {
+            margin: 8px 0;
+            padding: 12px;
+            border: 1px solid #55585d;
+            border-radius: 5px;
+            background: #383a3e;
+            color: #d5d7da;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .scout-auth-card p,
+        .scout-info-card p {
+            margin: 6px 0;
+        }
+
+        .scout-auth-actions,
+        .scout-control-grid,
+        .scout-book-filters {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .scout-auth-actions button,
+        .scout-control-button,
+        .scout-copy-button,
+        .scout-book-refresh {
+            min-height: 36px;
+            padding: 7px 10px;
+            border: 1px solid #65686d;
+            border-radius: 5px;
+            background: #414348;
+            color: #e5e7eb;
+            font: inherit;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .scout-auth-actions button:hover,
+        .scout-control-button:hover,
+        .scout-copy-button:hover,
+        .scout-book-refresh:hover {
+            background: #4c4f54;
+        }
+
+        .scout-auth-actions .scout-auth-connect,
+        .scout-book-refresh {
+            border-color: #10b981;
+            background: #087f5b;
+            color: #fff;
+        }
+
+        .scout-auth-status,
+        .scout-book-status,
+        .scout-action-status {
+            min-height: 18px;
+            color: #bec2c7;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .scout-book-summary {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: #242528;
+            color: #f0f1f2;
+            font-size: 13px;
+        }
+
+        .scout-book-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e5e7eb;
+            font-size: 12px;
+        }
+
+        .scout-book-table th,
+        .scout-book-table td {
+            padding: 8px 5px;
+            border-bottom: 1px solid #55585d;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .scout-book-table th {
+            color: #bfc2c7;
+            font-weight: 500;
+        }
+
+        .scout-book-move {
+            padding: 4px 6px;
+            border: 0;
+            border-radius: 3px;
+            background: transparent;
+            color: #9cc8ee;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .scout-book-move:hover {
+            background: #414348;
+        }
+
+        .scout-result-bar {
+            display: flex;
+            height: 13px;
+            overflow: hidden;
+            border-radius: 3px;
+            background: #55585d;
+        }
+
+        .scout-result-bar span:nth-child(1) {
+            background: #e7e4de;
+        }
+
+        .scout-result-bar span:nth-child(2) {
+            background: #8f8d88;
+        }
+
+        .scout-result-bar span:nth-child(3) {
+            background: #4d4c49;
+        }
+
+        .scout-result-legend {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3px;
+            color: #afb2b6;
+            font-size: 10px;
+        }
+
+        .scout-report-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .scout-report-stat {
+            padding: 10px;
+            border-radius: 5px;
+            background: #242528;
+        }
+
+        .scout-report-stat span {
+            display: block;
+            color: #aeb1b5;
+            font-size: 11px;
+        }
+
+        .scout-report-stat strong {
+            display: block;
+            margin-top: 3px;
+            color: #f4f4f2;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .scout-data-select {
+            width: 100%;
+            min-height: 36px;
+            padding: 7px 9px;
+            border: 1px solid #696c71;
+            border-radius: 5px;
+            background: #414348;
+            color: #fff;
+            font: inherit;
+            font-size: 12px;
+        }
+
+        .scout-pgn {
+            width: 100%;
+            min-height: 160px;
+            resize: vertical;
+            padding: 9px;
+            border: 1px solid #55585d;
+            border-radius: 5px;
+            background: #242528;
+            color: #e5e7eb;
+            font: 12px/1.5 Consolas, monospace;
+        }
+
+        .scout-step {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .scout-step[hidden],
+        .scout-search[hidden] {
+            display: none;
+        }
+
+        .scout-step summary {
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            list-style: none;
+            cursor: pointer;
+            color: #e5e7eb;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .scout-step summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .scout-step summary::after {
+            content: "⌄";
+            margin-left: auto;
+            color: #aeb1b5;
+            font-size: 18px;
+        }
+
+        .scout-step[open] summary::after {
+            content: "⌃";
+        }
+
+        .scout-step-icon {
+            width: 23px;
+            height: 23px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #85888c;
+            border-radius: 5px;
+            color: #d5d8dc;
+            font-size: 12px;
+        }
+
+        .scout-step-body {
+            padding: 0 8px 8px 33px;
+        }
+
+        .scout-rules {
+            width: 100%;
+            padding: 8px 11px;
+            border: 1px solid #55585d;
+            border-radius: 5px;
+            background: #414348;
+            color: #e7e9ec;
+            font: inherit;
+            text-align: left;
+        }
+
+        .scout-source-list {
+            display: grid;
+            gap: 2px;
+        }
+
+        .scout-source {
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #e5e7eb;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .scout-source-logo {
+            display: block;
+            width: 25px;
+            height: 25px;
+            flex: 0 0 auto;
+            object-fit: contain;
+        }
+
+        .scout-source-logo.lichess {
+            padding: 2px;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .scout-source-logo.chesscom {
+            width: 96px;
+            height: 27px;
+        }
+
+        .scout-source input,
+        .scout-color-choice input {
+            width: 18px;
+            height: 18px;
+            accent-color: #10b981;
+            flex: 0 0 auto;
+        }
+
+        .scout-divider {
+            border: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+        }
+
+        .scout-field-label {
+            display: block;
+            margin-bottom: 6px;
+            color: #c5c8cc;
+            font-size: 12px;
+        }
+
+        .scout-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #696c71;
+            border-radius: 5px;
+            background: #414348;
+            color: #fff;
+            font: inherit;
+            outline: none;
+        }
+
+        .scout-input:focus {
+            border-color: #55c59a;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.18);
+        }
+
+        .scout-file-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            color: #d6d9dd;
+            font-size: 13px;
+            width: 100%;
+            padding: 2px 0;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .scout-file-label input {
+            max-width: 190px;
+            color: #c5c8cc;
+            font: inherit;
+        }
+
+        .scout-file-label[hidden] {
+            display: none;
+        }
+
+        .scout-color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 18px;
+            margin-bottom: 6px;
+        }
+
+        .scout-color-choice {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #e5e7eb;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .scout-panel .scout-search {
+            flex: 0 0 auto;
+            margin-top: auto;
+            padding-top: 8px;
+        }
+
+        .scout-search .dock-btn {
+            width: 100%;
+            padding: 8px 14px;
+            border-color: #10b981;
+            background: #087f5b;
+            color: #fff;
+        }
+
+        .scout-search .dock-btn:hover {
+            background: #059669;
+        }
+
+        .scout-search-status {
+            min-height: 14px;
+            margin-top: 4px;
+            color: #bec2c7;
+            font-size: 12px;
         }
 
         /* TOAST NOTIFICATION */
@@ -797,6 +1753,7 @@
             .panels-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             .mode-card:last-child {
                 grid-column: span 2;
             }
@@ -839,6 +1796,79 @@
             .user-email {
                 max-width: 110px;
             }
+
+            .scout-overlay {
+                padding: 0;
+                align-items: stretch;
+            }
+
+            .scout-shell {
+                height: 100dvh;
+                max-height: none;
+                width: 100%;
+                border-radius: 0;
+                --openingtree-crop-top: 82px;
+            }
+
+            .scout-shell {
+                --openingtree-crop-top: 56px;
+            }
+
+            .scout-workspace {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 12px;
+                padding: 12px;
+                overflow: auto;
+            }
+
+            .scout-board-layout {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: auto auto;
+                gap: 12px;
+            }
+
+            .scout-board-side {
+                width: min(100%, 440px);
+                justify-self: center;
+            }
+
+            .scout-resize-handle {
+                display: none;
+            }
+
+            .scout-board {
+                width: min(100%, 440px);
+            }
+
+            .scout-move-panel {
+                min-height: 140px;
+                max-height: 220px;
+            }
+
+            .scout-panel {
+                order: -1;
+                min-height: 520px;
+                overflow: visible;
+            }
+
+            .scout-tabs {
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .scout-shell {
+                --openingtree-crop-top: 56px;
+            }
+
+            #scoutTitle {
+                font-size: 18px;
+            }
+
+            .scout-shell .modal-header {
+                min-height: 54px;
+                padding: 10px 14px;
+            }
         }
     </style>
 </head>
@@ -848,7 +1878,7 @@
     <!-- NAVBAR -->
     <header class="navbar">
         <!-- LOGO (EXACT SVG FROM CHESSAI.HTML) -->
-        <a href="../chesslogin/chessai.html" class="brand" title="Chess-AI Home">
+        <a href="./chessdashboard.html" class="brand" title="Chess-AI Dashboard" aria-label="Chess-AI Dashboard">
             <div class="brand-icon">
                 <svg width="28" height="28" viewBox="0 0 460 520" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -913,10 +1943,14 @@
                     <!-- FOREHEAD -->
                     <path d="M168 190 Q200 148 260 155 Q300 158 320 190 L320 210 L168 210Z" fill="url(#lbodyMain)" />
                     <path d="M168 190 Q162 168 168 155 L168 190Z" fill="#04301f" />
-                    <path d="M146 196 L168 188 Q202 148 262 154 Q302 156 320 188 L346 180 Q320 142 258 138 Q202 134 162 172 L140 188Z" fill="url(#lbodyTop)" />
+                    <path
+                        d="M146 196 L168 188 Q202 148 262 154 Q302 156 320 188 L346 180 Q320 142 258 138 Q202 134 162 172 L140 188Z"
+                        fill="url(#lbodyTop)" />
 
                     <!-- MANE -->
-                    <path d="M270 155 Q320 120 350 80 Q330 90 310 88 Q330 60 348 42 Q310 52 286 55 Q308 30 318 14 Q280 30 260 38 Q270 22 266 10 Q238 28 230 42 Q222 26 220 14 Q200 28 206 40 Q186 30 154 16 Q162 34 158 52 Q130 38 106 48 Q120 68 112 86 Q92 84 74 96 Q108 110 118 148 Q140 130 168 148 Q168 142 168 136 Q194 122 230 122 Q258 122 270 138 Z" fill="url(#lmaneGrad)" />
+                    <path
+                        d="M270 155 Q320 120 350 80 Q330 90 310 88 Q330 60 348 42 Q310 52 286 55 Q308 30 318 14 Q280 30 260 38 Q270 22 266 10 Q238 28 230 42 Q222 26 220 14 Q200 28 206 40 Q186 30 154 16 Q162 34 158 52 Q130 38 106 48 Q120 68 112 86 Q92 84 74 96 Q108 110 118 148 Q140 130 168 148 Q168 142 168 136 Q194 122 230 122 Q258 122 270 138 Z"
+                        fill="url(#lmaneGrad)" />
 
                     <!-- EARS -->
                     <path d="M202 140 L216 90 L230 140Z" fill="#0a0a12" />
@@ -934,10 +1968,12 @@
                     <path d="M206 228 Q234 218 264 226 L260 234 Q234 226 208 236Z" fill="#04301f" />
 
                     <!-- CHEEK HIGHLIGHT -->
-                    <path d="M280 260 Q310 240 320 280 Q308 310 290 320 L270 310 Q288 288 280 260Z" fill="#14d48e" opacity="0.22" />
+                    <path d="M280 260 Q310 240 320 280 Q308 310 290 320 L270 310 Q288 288 280 260Z" fill="#14d48e"
+                        opacity="0.22" />
 
                     <!-- FOREHEAD HIGHLIGHT -->
-                    <path d="M200 188 Q230 170 258 182 Q242 174 230 176 Q216 174 200 188Z" fill="#3fffc2" opacity="0.35" />
+                    <path d="M200 188 Q230 170 258 182 Q242 174 230 176 Q216 174 200 188Z" fill="#3fffc2"
+                        opacity="0.35" />
 
                     <!-- RIM LIGHT -->
                     <path d="M168 206 L168 386 L172 386 L172 206Z" fill="#22f0a8" opacity="0.25" />
@@ -973,7 +2009,9 @@
             <button class="nav-item" onclick="openSettingsModal()" id="navSettings">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
                 </svg>
                 <span>Setting</span>
             </button>
@@ -982,20 +2020,22 @@
         <!-- USER CHIP & SIGN OUT (NAME ON TOP, EMAIL ON LOWER PART) -->
         <div class="nav-right">
             <div class="user-chip" id="userProfileChip" title="Account Details">
-                <div class="user-avatar" id="userAvatar">K</div>
+                <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-meta">
-                    <span class="user-name" id="userName">Ken</span>
-                    <span class="user-email" id="userEmail">kenmangubat27@gmail.com</span>
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-email" id="userEmail"></span>
                 </div>
             </div>
-            <button class="btn-logout" id="btnLogout" onclick="handleLogout()" title="Log out and return to sign in">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <a class="btn-logout" id="btnLogout" href="../chesslogin/chessai.html"
+                title="Log out and return to sign in">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
                 <span>Sign Out</span>
-            </button>
+            </a>
         </div>
     </header>
 
@@ -1004,8 +2044,9 @@
         <!-- WELCOME HERO -->
         <section class="welcome-header">
             <div class="welcome-title-group">
-                <h1>Welcome, <span id="heroUserName">Ken</span>!</h1>
-                <p class="welcome-subtitle">Select your game mode below to challenge the engine, invite a player, or analyze tactical lines.</p>
+                <h1>Welcome, <span id="heroUserName">Loading...</span>!</h1>
+                <p class="welcome-subtitle">Select your game mode below to challenge the engine, invite a player, or
+                    analyze tactical lines.</p>
             </div>
             <div class="quick-metrics">
                 <div class="metric-pill">
@@ -1026,9 +2067,10 @@
 
             <div class="panels-grid">
                 <!-- 1. HUMAN VS COMPUTER -->
-                <article class="mode-card" onclick="launchMode('computer')" tabindex="0" role="button" aria-label="Play Human vs Computer">
+                <article class="mode-card" onclick="launchMode('computer')" tabindex="0" role="button"
+                    aria-label="Play Human vs Computer">
                     <div class="mode-image-wrap">
-                        <img src="./assets/human_vs_computer.jpg" alt="Human vs Computer Chess AI" class="mode-img" />
+                        <img src="./assets/computer vs human.jpg" alt="Human vs Computer Chess AI" class="mode-img" />
                         <div class="mode-image-gradient"></div>
                         <div class="mode-tag">
                             <span class="tag-dot"></span>
@@ -1039,14 +2081,16 @@
                         <div class="mode-text-group">
                             <h3 class="mode-title">
                                 Human vs Computer
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                                     <line x1="8" y1="21" x2="16" y2="21"></line>
                                     <line x1="12" y1="17" x2="12" y2="21"></line>
                                 </svg>
                             </h3>
                             <p class="mode-desc">
-                                Duel against our adaptive Stockfish engine. Customize AI bot personalities, rating handicap from 800 to 2800 ELO, and receive live move assistance.
+                                Duel against our adaptive Stockfish engine. Customize AI bot personalities, rating
+                                handicap from 800 to 2800 ELO, and receive live move assistance.
                             </p>
                             <div class="mode-features">
                                 <span class="feature-pill">Stockfish 16</span>
@@ -1065,9 +2109,10 @@
                 </article>
 
                 <!-- 2. HUMAN VS HUMAN -->
-                <article class="mode-card" onclick="launchMode('human')" tabindex="0" role="button" aria-label="Play Human vs Human">
+                <article class="mode-card" onclick="launchMode('human')" tabindex="0" role="button"
+                    aria-label="Play Human vs Human">
                     <div class="mode-image-wrap">
-                        <img src="./assets/human_vs_human.jpg" alt="Human vs Human Chess Battle" class="mode-img" />
+                        <img src="./assets/human vs human.jpg" alt="Human vs Human Chess Battle" class="mode-img" />
                         <div class="mode-image-gradient"></div>
                         <div class="mode-tag">
                             <span class="tag-dot" style="background:#38bdf8;"></span>
@@ -1078,7 +2123,8 @@
                         <div class="mode-text-group">
                             <h3 class="mode-title">
                                 Human vs Human
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="9" cy="7" r="4"></circle>
                                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -1086,7 +2132,8 @@
                                 </svg>
                             </h3>
                             <p class="mode-desc">
-                                Challenge a rival over the board. Play side-by-side with pass & play, customize chess clocks (Blitz, Rapid, Classical), or share an instant private room code.
+                                Challenge a rival over the board. Play side-by-side with pass & play, customize chess
+                                clocks (Blitz, Rapid, Classical), or share an instant private room code.
                             </p>
                             <div class="mode-features">
                                 <span class="feature-pill">Pass & Play</span>
@@ -1105,9 +2152,10 @@
                 </article>
 
                 <!-- 3. ANALYSIS BOARD -->
-                <article class="mode-card" onclick="launchMode('analysis')" tabindex="0" role="button" aria-label="Open Analysis Board">
+                <article class="mode-card" onclick="launchMode('analysis')" tabindex="0" role="button"
+                    aria-label="Open Analysis Board">
                     <div class="mode-image-wrap">
-                        <img src="./assets/analysis_board.jpg" alt="Futuristic Chess Analysis Board" class="mode-img" />
+                        <img src="./assets/analysis.jpg" alt="Futuristic Chess Analysis Board" class="mode-img" />
                         <div class="mode-image-gradient"></div>
                         <div class="mode-tag">
                             <span class="tag-dot" style="background:#a855f7;"></span>
@@ -1118,12 +2166,14 @@
                         <div class="mode-text-group">
                             <h3 class="mode-title">
                                 Analysis Board
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                                 </svg>
                             </h3>
                             <p class="mode-desc">
-                                Master every position. Paste FEN/PGN notations, inspect multi-line evaluation trees, test variations freely, and let the engine identify winning candidate moves.
+                                Master every position. Paste FEN/PGN notations, inspect multi-line evaluation trees,
+                                test variations freely, and let the engine identify winning candidate moves.
                             </p>
                             <div class="mode-features">
                                 <span class="feature-pill">FEN / PGN Import</span>
@@ -1143,24 +2193,6 @@
             </div>
         </section>
 
-        <!-- QUICK EXPLORER DOCK -->
-        <section class="quick-dock">
-            <div class="dock-left">
-                <div class="dock-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                </div>
-                <div class="dock-info">
-                    <h4>Daily Tactical Puzzle Available</h4>
-                    <p>Solve today's Grandmaster endgame puzzle to gain +15 tactical training points.</p>
-                </div>
-            </div>
-            <div class="dock-actions">
-                <button class="dock-btn" onclick="openPracticeModal()">Solve Puzzle</button>
-                <button class="dock-btn" onclick="openScoutModal()">View Leaderboard</button>
-            </div>
-        </section>
     </main>
 
     <!-- ══════════════════════════════════════════════
@@ -1182,20 +2214,14 @@
                 <button class="modal-close-btn" onclick="closeModal('practiceModal')">✕</button>
             </div>
             <div class="modal-body">
-                <p style="color:var(--text-muted); font-size:14px;">Select a structured training session to elevate your tactical calculation and board vision.</p>
-                
-                <div class="settings-toggle-row" onclick="startPracticeSession('puzzles')" style="cursor:pointer;">
-                    <div>
-                        <div class="settings-toggle-label">⚡ Daily Tactical Puzzles</div>
-                        <div class="settings-toggle-desc">Solve adaptive puzzles rated to your current skill level</div>
-                    </div>
-                    <button class="dock-btn" style="color:var(--emerald);">Start</button>
-                </div>
+                <p style="color:var(--text-muted); font-size:14px;">Select a structured training session to elevate your
+                    tactical calculation and board vision.</p>
 
                 <div class="settings-toggle-row" onclick="startPracticeSession('endgame')" style="cursor:pointer;">
                     <div>
                         <div class="settings-toggle-label">👑 Endgame Drills</div>
-                        <div class="settings-toggle-desc">Master Rook & Pawn, King & Pawn, and minor piece endgames</div>
+                        <div class="settings-toggle-desc">Master Rook & Pawn, King & Pawn, and minor piece endgames
+                        </div>
                     </div>
                     <button class="dock-btn" style="color:var(--emerald);">Start</button>
                 </div>
@@ -1203,7 +2229,8 @@
                 <div class="settings-toggle-row" onclick="startPracticeSession('openings')" style="cursor:pointer;">
                     <div>
                         <div class="settings-toggle-label">📖 Opening Repertoire</div>
-                        <div class="settings-toggle-desc">Drill Sicilian Defense, Queen's Gambit, and Italian Game lines</div>
+                        <div class="settings-toggle-desc">Drill Sicilian Defense, Queen's Gambit, and Italian Game lines
+                        </div>
                     </div>
                     <button class="dock-btn" style="color:var(--emerald);">Start</button>
                 </div>
@@ -1214,41 +2241,243 @@
         </div>
     </div>
 
-    <!-- SCOUT MODAL -->
-    <div class="modal-overlay" id="scoutModal" onclick="handleOverlayClick(event, 'scoutModal')">
-        <div class="modal-box">
+    <!-- SCOUT WORKSPACE -->
+    <div class="modal-overlay scout-overlay" id="scoutModal" onclick="handleOverlayClick(event, 'scoutModal')">
+        <section class="modal-box scout-shell" role="dialog" aria-modal="true" aria-labelledby="scoutTitle">
             <div class="modal-header">
-                <div class="modal-title">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        <path d="M11 8v6"></path>
-                        <path d="M8 11h6"></path>
-                    </svg>
-                    <span>Scout Opponents</span>
-                </div>
-                <button class="modal-close-btn" onclick="closeModal('scoutModal')">✕</button>
+                <div class="modal-title" id="scoutTitle">OpeningTree Scout</div>
+                <button class="modal-close-btn" onclick="closeModal('scoutModal')" aria-label="Close scout">✕</button>
             </div>
-            <div class="modal-body">
-                <div class="form-row">
-                    <label class="form-label">Search Grandmaster or Opponent Username</label>
-                    <input type="text" class="form-input" id="scoutInput" placeholder="e.g. MagnusCarlsen, Hikaru, or custom username..." />
+            <div class="scout-intro" id="scoutIntro">
+                <span class="scout-intro-badge">External scouting service</span>
+                <h3>Use OpeningTree inside Chess-AI</h3>
+                <p>OpeningTree provides its own scouting tools and account connection. Sign in to the chess site there, then return to this dashboard to continue in the embedded Scout view.</p>
+                <ol>
+                    <li>Open OpeningTree.com in a separate tab.</li>
+                    <li>Choose Lichess or Chess.com in OpeningTree and finish its sign-in/authorization there.</li>
+                    <li>Come back to this tab and select <strong>Continue to Scout</strong>.</li>
+                </ol>
+                <div class="scout-intro-actions">
+                    <a href="https://www.openingtree.com/#top" target="_blank" rel="noopener noreferrer">Open OpeningTree.com to sign in ↗</a>
+                    <button class="scout-intro-continue" type="button" onclick="continueScoutWithOpeningTree()">Continue to Scout</button>
                 </div>
-                <div class="settings-toggle-row">
-                    <div>
-                        <div class="settings-toggle-label">Opening Preparation Radar</div>
-                        <div class="settings-toggle-desc">Analyze win/loss statistics as White and Black for any opponent</div>
+                <div class="scout-intro-note">OpeningTree and the chess provider manage their own sign-in. Your Lichess/Chess.com password is not entered into Chess-AI. Some browsers may restrict a third-party site's login session inside an embedded view; if that happens, use the OpeningTree tab you opened above.</div>
+            </div>
+            <div class="scout-workspace" hidden>
+                <div class="scout-board-layout" id="scoutBoardLayout">
+                    <div class="scout-board-side">
+                        <div class="scout-board" id="scoutBoard" role="grid"
+                            aria-label="Interactive chessboard in the starting position"></div>
                     </div>
-                    <button class="dock-btn" onclick="performScoutSearch()" style="color:var(--emerald);">Search</button>
+                    <button class="scout-resize-handle" id="scoutResizeHandle" type="button" role="separator"
+                        aria-label="Resize the chessboard and move list" aria-orientation="vertical"
+                        aria-valuemin="40" aria-valuemax="75" aria-valuenow="69" tabindex="0"></button>
+                    <section class="scout-move-panel" aria-label="Move list">
+                        <div class="scout-move-controls">
+                            <button id="scoutPreviousMove" type="button" onclick="navigateScoutMoves(-1)"
+                                aria-label="Previous move" disabled>‹ Previous</button>
+                            <button id="scoutNextMove" type="button" onclick="navigateScoutMoves(1)"
+                                aria-label="Next move" disabled>Next ›</button>
+                        </div>
+                        <div class="scout-opening-name" id="scoutPositionLabel">Starting position</div>
+                        <div class="scout-move-list" id="scoutMoveList">
+                            <div class="scout-move-empty">Play a move on the board to build the move list.</div>
+                        </div>
+                    </section>
                 </div>
-                <div style="background:var(--surface); border-radius:var(--radius-sm); padding:14px; font-size:13px; color:var(--text-muted);">
-                    💡 <strong>Pro Tip:</strong> Scout tracks recent games from Masters database to help you exploit common tactical mistakes.
-                </div>
+                <section class="scout-panel" aria-label="Opening scout setup">
+                    <div class="scout-tabs" role="tablist" aria-label="Scout views">
+                        <button class="scout-tab active" type="button" role="tab" aria-selected="true" title="User"
+                            aria-label="User" onclick="setScoutTab(this, 'scoutUserPane')">
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill="currentColor" stroke="none"
+                                    d="M10 10a3.4 3.4 0 1 0 0-6.8A3.4 3.4 0 0 0 10 10Zm0 1.5c-3.3 0-6 1.7-6 3.8v1.2h12v-1.2c0-2.1-2.7-3.8-6-3.8Z" />
+                            </svg>
+                            <span>User</span>
+                        </button>
+                        <button class="scout-tab" type="button" role="tab" aria-selected="false" title="Moves"
+                            aria-label="Moves" onclick="setScoutTab(this, 'scoutMovesPane')">
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M7 5h9M7 10h9M7 15h9" />
+                                <circle cx="3.5" cy="5" r=".8" fill="currentColor" stroke="none" />
+                                <circle cx="3.5" cy="10" r=".8" fill="currentColor" stroke="none" />
+                                <circle cx="3.5" cy="15" r=".8" fill="currentColor" stroke="none" />
+                            </svg>
+                        </button>
+                        <button class="scout-tab" type="button" role="tab" aria-selected="false"
+                            title="Opening book" aria-label="Opening book"
+                            onclick="setScoutTab(this, 'scoutBookPane')">
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M4 3.2h5.2c1.1 0 1.8.7 1.8 1.8v12c0-1.1-.7-1.8-1.8-1.8H4z" />
+                                <path d="M16 3.2h-3.2c-1.1 0-1.8.7-1.8 1.8v12c0-1.1.7-1.8 1.8-1.8H16z" />
+                            </svg>
+                        </button>
+                        <button class="scout-tab" type="button" role="tab" aria-selected="false" title="Statistics"
+                            aria-label="Report" onclick="setScoutTab(this, 'scoutReportPane')">
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M2.5 17.2h15M4.5 15V9.5h3V15M9 15V4.5h3V15m1.5 0v-8h3v8" />
+                            </svg>
+                        </button>
+                        <button class="scout-tab" type="button" role="tab" aria-selected="false" title="Settings"
+                            aria-label="Controls" onclick="setScoutTab(this, 'scoutControlsPane')">
+                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                <path
+                                    d="M8.8 2.4h2.4l.5 1.8 1.5.9 1.8-.5 1.2 2.1-1.3 1.4v1.8l1.3 1.4-1.2 2.1-1.8-.5-1.5.9-.5 1.8H8.8l-.5-1.8-1.5-.9-1.8.5-1.2-2.1 1.3-1.4V8.1L3.8 6.7 5 4.6l1.8.5 1.5-.9z" />
+                                <circle cx="10" cy="9.1" r="2.2" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="scout-tab-panel" id="scoutUserPane" role="tabpanel">
+                        <div class="scout-auth-card">
+                            <strong id="scoutAuthHeading">Lichess not connected</strong>
+                            <p id="scoutAuthDescription">Connect with Lichess to query the real Opening Explorer database. This read-only login asks for no account permissions.</p>
+                            <div class="scout-auth-actions">
+                                <button class="scout-auth-connect" id="scoutConnectButton" type="button"
+                                    onclick="startScoutLichessOAuth()">Connect Lichess</button>
+                                <button id="scoutDisconnectButton" type="button" hidden
+                                    onclick="disconnectScoutLichess()">Disconnect</button>
+                            </div>
+                            <div class="scout-auth-status" id="scoutAuthStatus" aria-live="polite"></div>
+                        </div>
+
+                        <details class="scout-step" id="scoutSourceStep" open>
+                            <summary><span class="scout-step-icon">1</span>Select an account source</summary>
+                            <div class="scout-step-body scout-source-list">
+                                <label class="scout-source"><input type="radio" name="scoutSource" value="lichess"
+                                        aria-label="Lichess" onchange="selectScoutSource(this)" />
+                                    <img class="scout-source-logo lichess" src="./assets/logos/lichess.svg"
+                                        alt="" />lichess.org</label>
+                                <label class="scout-source"><input type="radio" name="scoutSource" value="chesscom"
+                                        aria-label="Chess.com" onchange="selectScoutSource(this)" />
+                                    <img class="scout-source-logo chesscom" src="./assets/logos/chesscom.svg"
+                                        alt="Chess.com" /></label>
+                            </div>
+                        </details>
+
+                        <details class="scout-step" id="scoutPlayerStep" hidden>
+                            <summary><span class="scout-step-icon">2</span>Player details</summary>
+                            <div class="scout-step-body">
+                                <label class="scout-field-label" id="scoutUsernameLabel" for="scoutInput">Player username</label>
+                                <input type="text" class="scout-input" id="scoutInput"
+                                    placeholder="Choose Lichess or Chess.com first" autocomplete="off"
+                                    oninput="updateScoutProgress()"
+                                    onkeydown="if (event.key === 'Enter') performScoutSearch()" />
+                            </div>
+                        </details>
+
+                        <details class="scout-step" id="scoutFilterStep" hidden>
+                            <summary><span class="scout-step-icon">3</span>Choose game color</summary>
+                            <div class="scout-step-body">
+                                <div class="scout-color-options" role="group" aria-label="Player color">
+                                    <label class="scout-color-choice"><input type="radio" name="scoutColor" value="white"
+                                            onchange="updateScoutProgress()" />White</label>
+                                    <label class="scout-color-choice"><input type="radio" name="scoutColor" value="black"
+                                            onchange="updateScoutProgress()" />Black</label>
+                                </div>
+                                <span class="scout-field-label">Number of games</span>
+                                <div class="scout-input" id="scoutGameLimit" aria-label="Number of games">All available games</div>
+                            </div>
+                        </details>
+
+                        <div class="scout-search" id="scoutAnalyzeStep" hidden>
+                            <button class="dock-btn" id="scoutSearchButton" type="button" onclick="performScoutSearch()">Analyze games</button>
+                            <p class="scout-search-status" id="scoutSearchStatus" aria-live="polite"></p>
+                        </div>
+                    </div>
+
+                    <div class="scout-tab-panel" id="scoutMovesPane" role="tabpanel" hidden>
+                        <h3 class="scout-panel-heading">Moves in this line</h3>
+                        <div class="scout-info-card" id="scoutMovesSummary">No moves played.</div>
+                        <label class="scout-field-label" for="scoutPgnOutput">Current line (PGN)</label>
+                        <textarea class="scout-pgn" id="scoutPgnOutput" readonly aria-label="Current move line in PGN format"></textarea>
+                        <div class="scout-auth-actions">
+                            <button class="scout-copy-button" type="button" onclick="copyScoutNotation('pgn')">Copy PGN</button>
+                            <button class="scout-copy-button" type="button" onclick="copyScoutNotation('fen')">Copy FEN</button>
+                        </div>
+                        <div class="scout-action-status" id="scoutMovesStatus" aria-live="polite"></div>
+                    </div>
+
+                    <div class="scout-tab-panel" id="scoutBookPane" role="tabpanel" hidden>
+                        <h3 class="scout-panel-heading">Opening book</h3>
+                        <p class="scout-info-card">Counts are aggregated from the selected Lichess database for the board position shown. Lichess game counts include rated games in its Explorer dataset.</p>
+                        <label class="scout-field-label" for="scoutBookDatabase">Database</label>
+                        <select class="scout-data-select" id="scoutBookDatabase" onchange="updateScoutBookFilters()">
+                            <option value="lichess">Lichess games</option>
+                            <option value="masters">Masters</option>
+                        </select>
+                        <div id="scoutLichessBookFilters" class="scout-book-filters">
+                            <div>
+                                <label class="scout-field-label" for="scoutBookSpeeds">Game speeds</label>
+                                <select class="scout-data-select" id="scoutBookSpeeds" onchange="fetchScoutOpeningBook(true)">
+                                    <option value="">All speeds</option>
+                                    <option value="bullet">Bullet</option>
+                                    <option value="blitz">Blitz</option>
+                                    <option value="rapid">Rapid</option>
+                                    <option value="classical">Classical</option>
+                                    <option value="correspondence">Correspondence</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="scout-field-label" for="scoutBookRatings">Rating groups</label>
+                                <select class="scout-data-select" id="scoutBookRatings" onchange="fetchScoutOpeningBook(true)">
+                                    <option value="">All ratings</option>
+                                    <option value="0">Under 1000</option>
+                                    <option value="1000">1000+</option>
+                                    <option value="1200">1200+</option>
+                                    <option value="1400">1400+</option>
+                                    <option value="1600">1600+</option>
+                                    <option value="1800">1800+</option>
+                                    <option value="2000">2000+</option>
+                                    <option value="2200">2200+</option>
+                                    <option value="2500">2500+</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="scout-book-refresh" id="scoutBookRefresh" type="button"
+                            onclick="fetchScoutOpeningBook(true)">Refresh position</button>
+                        <div class="scout-book-status" id="scoutBookStatus" role="status" aria-live="polite">Connect to Lichess to load opening data.</div>
+                        <div id="scoutBookResults"></div>
+                    </div>
+
+                    <div class="scout-tab-panel" id="scoutReportPane" role="tabpanel" hidden>
+                        <h3 class="scout-panel-heading">Position report</h3>
+                        <div class="scout-info-card">Results are for games in the selected Opening Explorer database at the current board position. They are not totals of all chess games ever played.</div>
+                        <div class="scout-report-grid">
+                            <div class="scout-report-stat"><span>Games</span><strong id="scoutReportGames">—</strong></div>
+                            <div class="scout-report-stat"><span>Position</span><strong id="scoutReportOpening">Starting</strong></div>
+                            <div class="scout-report-stat"><span>White wins</span><strong id="scoutReportWhite">—</strong></div>
+                            <div class="scout-report-stat"><span>Draws</span><strong id="scoutReportDraws">—</strong></div>
+                            <div class="scout-report-stat"><span>Black wins</span><strong id="scoutReportBlack">—</strong></div>
+                            <div class="scout-report-stat"><span>To move</span><strong id="scoutReportTurn">White</strong></div>
+                        </div>
+                        <div class="scout-book-status" id="scoutReportStatus">Connect to Lichess and open the book tab to load database totals.</div>
+                    </div>
+
+                    <div class="scout-tab-panel" id="scoutControlsPane" role="tabpanel" hidden>
+                        <h3 class="scout-panel-heading">Board controls</h3>
+                        <div class="scout-control-grid">
+                            <button class="scout-control-button" type="button" onclick="flipScoutBoard()">⇄ Flip board</button>
+                            <button class="scout-control-button" type="button" onclick="setScoutPosition(0)">⏮ Starting position</button>
+                            <button class="scout-control-button" type="button" onclick="clearScoutMoves()">▤ Clear moves</button>
+                            <button class="scout-control-button" type="button" onclick="toggleScoutBoardTheme()">◐ Toggle board colors</button>
+                        </div>
+                        <div class="scout-info-card">
+                            <strong>Standard chess rules</strong>
+                            <p>Legal moves, castling, en passant, and queen promotion are enabled.</p>
+                        </div>
+                        <div class="scout-action-status" id="scoutControlsStatus" aria-live="polite"></div>
+                    </div>
+                </section>
             </div>
-            <div class="modal-footer">
-                <button class="dock-btn" onclick="closeModal('scoutModal')">Done</button>
+            <div class="openingtree-embed" id="openingTreeEmbed" hidden>
+                <a class="openingtree-open-link" href="https://www.openingtree.com/#top"
+                    target="_blank" rel="noopener noreferrer">Open full site ↗</a>
+                <iframe id="openingTreeFrame" title="OpeningTree scouting page"
+                    data-src="https://www.openingtree.com/#top"
+                    referrerpolicy="no-referrer" loading="lazy"></iframe>
             </div>
-        </div>
+        </section>
     </div>
 
     <!-- SETTING MODAL -->
@@ -1258,7 +2487,9 @@
                 <div class="modal-title">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
                     </svg>
                     <span>Engine & Board Settings</span>
                 </div>
@@ -1289,7 +2520,8 @@
                         <div class="settings-toggle-label">Move Sound Effects</div>
                         <div class="settings-toggle-desc">Audio feedback for piece moves, checks, and captures</div>
                     </div>
-                    <input type="checkbox" id="soundToggle" checked style="accent-color:var(--emerald); width:18px; height:18px;" />
+                    <input type="checkbox" id="soundToggle" checked
+                        style="accent-color:var(--emerald); width:18px; height:18px;" />
                 </div>
 
                 <div class="settings-toggle-row">
@@ -1297,7 +2529,8 @@
                         <div class="settings-toggle-label">Blunder Warning Flash</div>
                         <div class="settings-toggle-desc">Alert when a move loses more than 2.0 centipawns</div>
                     </div>
-                    <input type="checkbox" id="blunderToggle" checked style="accent-color:var(--emerald); width:18px; height:18px;" />
+                    <input type="checkbox" id="blunderToggle" checked
+                        style="accent-color:var(--emerald); width:18px; height:18px;" />
                 </div>
             </div>
             <div class="modal-footer">
@@ -1320,7 +2553,8 @@
             </div>
             <div class="modal-footer">
                 <button class="dock-btn" onclick="closeModal('launchModal')">Cancel</button>
-                <button class="dock-btn" id="launchConfirmBtn" style="background:var(--emerald); color:#041209; font-weight:600;">Start Session</button>
+                <button class="dock-btn" id="launchConfirmBtn"
+                    style="background:var(--emerald); color:#041209; font-weight:600;">Start Session</button>
             </div>
         </div>
     </div>
@@ -1331,13 +2565,36 @@
     </div>
 
     <!-- SUPABASE CLIENT & SCRIPT -->
+    <script src="./assets/vendor/chess.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        let scoutChessGame = new Chess();
+        let scoutMoveHistory = [];
+        let scoutMoveIndex = 0;
+        let scoutSelectedSquare = null;
+        let scoutPointerDrag = null;
+        let scoutSuppressNextClick = false;
+        let scoutLichessAccessToken = null;
+        let scoutExplorerAbortController = null;
+        let scoutExplorerRequestId = 0;
+        let scoutExplorerCache = new Map();
+        let scoutExplorerData = null;
+        let scoutExplorerRequestKey = '';
+        let scoutActiveTab = 'scoutUserPane';
+        let scoutBoardFlipped = false;
+        let scoutLightBoard = false;
+        let scoutOAuthPopup = null;
+        let scoutOAuthPopupMonitor = null;
+
+        const LICHESS_CLIENT_ID = 'chess-ai-scout-kenmangubat';
+        const LICHESS_OAUTH_PENDING_KEY = 'chessAiScout.oauth.pending';
+
         // Supabase Client Initialization
-        const supabase = window.supabase.createClient(
+        const supabaseClient = window.supabase.createClient(
             'https://ejohrqrnhtdtntxdgihx.supabase.co',
             'sb_publishable_Q7yyXVs5-SXYjn0PyD1QTw_AM8IEDGi'
         );
+        const LOGIN_URL = '../chesslogin/chessai.html';
 
         /* ══════════════════════════════════════════════
            TOAST NOTIFICATION HELPER
@@ -1353,85 +2610,43 @@
 
         /* ══════════════════════════════════════════════
            USER & SESSION RESOLUTION
-           Extracts registered name (e.g. "Ken" for kenmangubat27@gmail.com)
-           and displays email below
         ══════════════════════════════════════════════ */
         function resolveUserDisplay(user) {
-            if (!user) {
-                return {
-                    name: 'Ken',
-                    email: 'kenmangubat27@gmail.com',
-                    initial: 'K'
-                };
-            }
-
             const email = (user.email || '').trim();
-            let resolvedName = '';
-
-            // 1. If user_metadata contains full_name
-            if (user.user_metadata && user.user_metadata.full_name && user.user_metadata.full_name.trim()) {
-                const rawName = user.user_metadata.full_name.trim();
-                const firstWord = rawName.split(/\s+/)[0];
-                resolvedName = firstWord.charAt(0).toUpperCase() + firstWord.slice(1);
-            }
-
-            // 2. Fallback: Parse name cleanly from email
-            // Example: kenmangubat27@gmail.com -> Ken
-            if (!resolvedName && email) {
-                const local = email.split('@')[0];
-                if (/^ken/i.test(local)) {
-                    resolvedName = 'Ken';
-                } else {
-                    // Strip numbers and trailing punctuation
-                    const alpha = local.replace(/[0-9._-]+.*$/, '') || local.replace(/[0-9]/g, '');
-                    if (alpha) {
-                        resolvedName = alpha.charAt(0).toUpperCase() + alpha.slice(1);
-                    } else {
-                        resolvedName = 'Player';
-                    }
-                }
-            }
-
-            if (!resolvedName) resolvedName = 'Ken';
-            const initial = resolvedName.charAt(0).toUpperCase();
+            const metadata = user.user_metadata || {};
+            const resolvedName = String(metadata.full_name || metadata.name || '').trim()
+                || email.split('@')[0]
+                || 'Player';
 
             return {
                 name: resolvedName,
-                email: email || 'kenmangubat27@gmail.com',
-                initial: initial || 'K'
+                email,
+                initial: resolvedName.charAt(0).toUpperCase() || '?'
             };
         }
 
         async function initUserSession() {
             try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session && session.user) {
-                    applyUserInfo(session.user);
-                } else {
-                    // Try getting user directly
-                    const { data: { user } } = await supabase.auth.getUser();
-                    if (user) {
-                        applyUserInfo(user);
-                    } else {
-                        // Default profile display (demonstrates Ken / kenmangubat27@gmail.com cleanly)
-                        applyUserInfo({
-                            email: 'kenmangubat27@gmail.com',
-                            user_metadata: { full_name: 'Ken' }
-                        });
-                    }
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                if (sessionError) throw sessionError;
+
+                if (!session || !session.user) {
+                    window.location.replace(LOGIN_URL);
+                    return;
                 }
+
+                applyUserInfo(session.user);
             } catch (err) {
-                console.warn('Session check warning:', err);
-                applyUserInfo({
-                    email: 'kenmangubat27@gmail.com',
-                    user_metadata: { full_name: 'Ken' }
-                });
+                console.error('Unable to load the signed-in user:', err);
+                document.getElementById('userName').textContent = 'Unavailable';
+                document.getElementById('heroUserName').textContent = 'Unavailable';
+                showDashToast('Unable to load your account. Please sign in again.');
             }
         }
 
         function applyUserInfo(userObj) {
             const info = resolveUserDisplay(userObj);
-            
+
             const nameEl = document.getElementById('userName');
             const heroNameEl = document.getElementById('heroUserName');
             const emailEl = document.getElementById('userEmail');
@@ -1445,24 +2660,10 @@
 
         /* ══════════════════════════════════════════════
            SIGN OUT HANDLER
-           Sign out and return directly to ../chesslogin/chessai.html
+           Sign out and return to the login page
         ══════════════════════════════════════════════ */
-        async function handleLogout() {
-            const btn = document.getElementById('btnLogout');
-            if (btn) {
-                btn.disabled = true;
-                btn.style.opacity = '0.6';
-            }
-            showDashToast('Signing out...');
-            try {
-                await supabase.auth.signOut();
-            } catch (err) {
-                console.warn('Sign out warning:', err);
-            } finally {
-                setTimeout(() => {
-                    window.location.href = '../chesslogin/chessai.html';
-                }, 400);
-            }
+        function handleLogout() {
+            window.location.href = '../chesslogin/chessai.html';
         }
 
         /* ══════════════════════════════════════════════
@@ -1473,11 +2674,878 @@
         }
 
         function openScoutModal() {
+            document.getElementById('scoutIntro').hidden = false;
+            document.getElementById('openingTreeEmbed').hidden = true;
             openModal('scoutModal');
-            setTimeout(() => {
-                const input = document.getElementById('scoutInput');
-                if (input) input.focus();
-            }, 100);
+        }
+
+        function continueScoutWithOpeningTree() {
+            const intro = document.getElementById('scoutIntro');
+            const embed = document.getElementById('openingTreeEmbed');
+            const frame = document.getElementById('openingTreeFrame');
+            if (!intro || !embed || !frame) {
+                showDashToast('The OpeningTree Scout view could not be opened.');
+                return;
+            }
+            intro.hidden = true;
+            embed.hidden = false;
+            frame.src = frame.dataset.src;
+        }
+
+        function renderScoutBoard() {
+            const board = document.getElementById('scoutBoard');
+            if (!board) return;
+            if (!board.dataset.pointerInteractionsInitialized) {
+                board.dataset.pointerInteractionsInitialized = 'true';
+                board.addEventListener('pointerdown', event => {
+                    if (event.button !== 0 && event.pointerType === 'mouse') return;
+                    const square = event.target.closest('.scout-square');
+                    if (!square) return;
+                    const piece = scoutChessGame.get(square.dataset.square);
+                    if (!piece || piece.color !== scoutChessGame.turn()) return;
+                    scoutPointerDrag = {
+                        from: square.dataset.square,
+                        pointerId: event.pointerId,
+                        startX: event.clientX,
+                        startY: event.clientY,
+                        moved: false,
+                        square,
+                        image: square.querySelector('.scout-piece')
+                    };
+                });
+                window.addEventListener('pointermove', event => {
+                    const drag = scoutPointerDrag;
+                    if (!drag || drag.pointerId !== event.pointerId) return;
+                    const deltaX = event.clientX - drag.startX;
+                    const deltaY = event.clientY - drag.startY;
+                    if (!drag.moved && Math.hypot(deltaX, deltaY) < 6) return;
+                    drag.moved = true;
+                    drag.square.classList.add('scout-dragging');
+                    drag.image.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+                    event.preventDefault();
+                });
+                window.addEventListener('pointerup', event => {
+                    const drag = scoutPointerDrag;
+                    if (!drag || drag.pointerId !== event.pointerId) return;
+                    scoutPointerDrag = null;
+                    if (!drag.moved) return;
+
+                    event.preventDefault();
+                    const target = document.elementFromPoint(event.clientX, event.clientY)
+                        ?.closest('.scout-square');
+                    const draggedBounds = drag.image.getBoundingClientRect();
+                    drag.square.classList.remove('scout-dragging');
+                    drag.image.style.transform = '';
+                    scoutSuppressNextClick = true;
+                    setTimeout(() => { scoutSuppressNextClick = false; }, 0);
+                    if (target) playScoutMove(drag.from, target.dataset.square, draggedBounds);
+                });
+                window.addEventListener('pointercancel', event => {
+                    if (!scoutPointerDrag || scoutPointerDrag.pointerId !== event.pointerId) return;
+                    scoutPointerDrag.square.classList.remove('scout-dragging');
+                    scoutPointerDrag.image.style.transform = '';
+                    scoutPointerDrag = null;
+                });
+            }
+            board.replaceChildren();
+            board.classList.toggle('scout-light-board', scoutLightBoard);
+            const files = 'abcdefgh';
+            const position = scoutChessGame.board();
+            const selectedMoves = scoutSelectedSquare
+                ? scoutChessGame.moves({ square: scoutSelectedSquare, verbose: true })
+                : [];
+
+            for (let rowIndex = 0; rowIndex < 8; rowIndex += 1) {
+                for (let columnIndex = 0; columnIndex < 8; columnIndex += 1) {
+                    const actualRow = scoutBoardFlipped ? 7 - rowIndex : rowIndex;
+                    const actualColumn = scoutBoardFlipped ? 7 - columnIndex : columnIndex;
+                    const piece = position[actualRow][actualColumn];
+                    const squareName = `${files[actualColumn]}${8 - actualRow}`;
+                    const square = document.createElement('button');
+                    square.type = 'button';
+                    square.className = `scout-square ${(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'}`;
+                    square.setAttribute('role', 'gridcell');
+                    square.setAttribute('aria-label', `${squareName}${piece ? `, ${piece.color === 'w' ? 'white' : 'black'} ${piece.type}` : ''}`);
+                    square.dataset.square = squareName;
+                    square.addEventListener('click', () => handleScoutSquareClick(squareName));
+                    square.draggable = false;
+                    if (squareName === scoutSelectedSquare) square.classList.add('scout-selected');
+                    const legalMove = selectedMoves.find(move => move.to === squareName);
+                    if (legalMove) {
+                        square.classList.add(legalMove.flags.includes('c') ? 'scout-capture-destination' : 'scout-legal-destination');
+                    }
+
+                    if (piece) {
+                        const image = document.createElement('img');
+                        image.className = 'scout-piece';
+                        image.src = `./assets/pieces/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`;
+                        image.alt = '';
+                        image.draggable = false;
+                        image.addEventListener('error', () => {
+                            console.error(`Unable to load chess piece image: ${image.src}`);
+                        }, { once: true });
+                        square.appendChild(image);
+                    }
+
+                    if (columnIndex === 0) {
+                        const coordinate = document.createElement('span');
+                        coordinate.className = 'scout-coordinate';
+                        coordinate.textContent = String(8 - actualRow);
+                        square.appendChild(coordinate);
+                    }
+
+                    if (rowIndex === 7) {
+                        const coordinate = document.createElement('span');
+                        coordinate.className = 'scout-coordinate file';
+                        coordinate.textContent = files[actualColumn];
+                        square.appendChild(coordinate);
+                    }
+
+                    board.appendChild(square);
+                }
+            }
+            board.setAttribute('aria-label', `Interactive chessboard, ${scoutChessGame.turn() === 'w' ? 'White' : 'Black'} to move`);
+            renderScoutMoveList();
+            updateScoutTabContent();
+        }
+
+        function handleScoutSquareClick(square) {
+            if (scoutSuppressNextClick) {
+                scoutSuppressNextClick = false;
+                return;
+            }
+            const piece = scoutChessGame.get(square);
+            if (scoutSelectedSquare) {
+                if (playScoutMove(scoutSelectedSquare, square)) return;
+                if (piece && piece.color === scoutChessGame.turn()) {
+                    scoutSelectedSquare = square;
+                } else {
+                    scoutSelectedSquare = null;
+                }
+            } else if (piece && piece.color === scoutChessGame.turn()) {
+                scoutSelectedSquare = square;
+            }
+            renderScoutBoard();
+        }
+
+        function playScoutMove(from, to, animationStartBounds = null, promotion = 'q') {
+            const movingPieces = [{ from, to }];
+            const board = document.getElementById('scoutBoard');
+            const sourceSquare = board?.querySelector(`[data-square="${from}"]`);
+            const sourceBounds = animationStartBounds || sourceSquare?.getBoundingClientRect();
+            const move = scoutChessGame.move({ from, to, promotion });
+            if (!move) return false;
+
+            if (move.flags.includes('k') || move.flags.includes('q')) {
+                const rank = move.color === 'w' ? '1' : '8';
+                movingPieces.push(move.flags.includes('k')
+                    ? { from: `h${rank}`, to: `f${rank}` }
+                    : { from: `a${rank}`, to: `d${rank}` });
+            }
+            const pieceAnimations = movingPieces.map((pieceMove, index) => ({
+                to: pieceMove.to,
+                fromBounds: index === 0 && animationStartBounds
+                    ? animationStartBounds
+                    : board?.querySelector(`[data-square="${pieceMove.from}"]`)?.getBoundingClientRect()
+            }));
+
+            scoutMoveHistory = scoutChessGame.history({ verbose: true });
+            scoutMoveIndex = scoutMoveHistory.length;
+            scoutSelectedSquare = null;
+            renderScoutBoard();
+            if (sourceBounds && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                pieceAnimations.forEach(({ to, fromBounds }) => {
+                    if (!fromBounds) return;
+                    const piece = board.querySelector(`[data-square="${to}"] .scout-piece`);
+                    if (!piece) return;
+                    const destinationBounds = piece.getBoundingClientRect();
+                    piece.animate([
+                        {
+                            transform: `translate(${fromBounds.left - destinationBounds.left}px, ${fromBounds.top - destinationBounds.top}px)`
+                        },
+                        { transform: 'translate(0, 0)' }
+                    ], {
+                        duration: 180,
+                        easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)'
+                    });
+                });
+            }
+            return true;
+        }
+
+        function setScoutBoardPaneWidth(width) {
+            const layout = document.getElementById('scoutBoardLayout');
+            const handle = document.getElementById('scoutResizeHandle');
+            if (!layout || !handle) return;
+
+            const handleWidth = handle.getBoundingClientRect().width;
+            const gap = parseFloat(getComputedStyle(layout).columnGap) || 0;
+            const available = layout.clientWidth - handleWidth - gap * 2;
+            const boardWidth = Math.max(220, Math.min(available - 150, width));
+            const movesWidth = available - boardWidth;
+            if (movesWidth < 150) return;
+
+            layout.style.setProperty('--scout-board-fr', `${boardWidth}fr`);
+            layout.style.setProperty('--scout-moves-fr', `${movesWidth}fr`);
+            handle.setAttribute('aria-valuemin', String(Math.ceil(220 / available * 100)));
+            handle.setAttribute('aria-valuemax', String(Math.floor((available - 150) / available * 100)));
+            handle.setAttribute('aria-valuenow', String(Math.round(boardWidth / available * 100)));
+        }
+
+        function initializeScoutResizer() {
+            const layout = document.getElementById('scoutBoardLayout');
+            const handle = document.getElementById('scoutResizeHandle');
+            if (!layout || !handle) return;
+
+            handle.addEventListener('pointerdown', event => {
+                event.preventDefault();
+                handle.setPointerCapture(event.pointerId);
+                handle.classList.add('resizing');
+                setScoutBoardPaneWidth(event.clientX - layout.getBoundingClientRect().left - 8);
+            });
+            handle.addEventListener('pointermove', event => {
+                if (handle.hasPointerCapture(event.pointerId)) {
+                    setScoutBoardPaneWidth(event.clientX - layout.getBoundingClientRect().left - 8);
+                }
+            });
+            const stopResizing = () => handle.classList.remove('resizing');
+            handle.addEventListener('pointerup', stopResizing);
+            handle.addEventListener('pointercancel', stopResizing);
+            handle.addEventListener('keydown', event => {
+                if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+                event.preventDefault();
+                const currentWidth = document.querySelector('.scout-board-side').getBoundingClientRect().width;
+                const available = layout.clientWidth - handle.getBoundingClientRect().width
+                    - (parseFloat(getComputedStyle(layout).columnGap) || 0) * 2;
+                const nextWidth = event.key === 'Home'
+                    ? 220
+                    : event.key === 'End'
+                        ? available - 150
+                        : currentWidth + (event.key === 'ArrowRight' ? 24 : -24);
+                setScoutBoardPaneWidth(nextWidth);
+            });
+        }
+
+        function navigateScoutMoves(step) {
+            setScoutPosition(Math.max(0, Math.min(scoutMoveHistory.length, scoutMoveIndex + step)));
+        }
+
+        function setScoutPosition(ply) {
+            scoutChessGame = new Chess();
+            scoutMoveHistory.slice(0, ply).forEach(move => {
+                scoutChessGame.move({ from: move.from, to: move.to, promotion: move.promotion || 'q' });
+            });
+            scoutMoveIndex = ply;
+            scoutSelectedSquare = null;
+            renderScoutBoard();
+        }
+
+        function renderScoutMoveList() {
+            const moveList = document.getElementById('scoutMoveList');
+            const previousButton = document.getElementById('scoutPreviousMove');
+            const nextButton = document.getElementById('scoutNextMove');
+            const positionLabel = document.getElementById('scoutPositionLabel');
+            if (!moveList || !previousButton || !nextButton || !positionLabel) return;
+
+            previousButton.disabled = scoutMoveIndex === 0;
+            nextButton.disabled = scoutMoveIndex === scoutMoveHistory.length;
+            positionLabel.textContent = scoutMoveIndex === 0
+                ? 'Starting position'
+                : `Move ${Math.ceil(scoutMoveIndex / 2)} · ${scoutChessGame.turn() === 'w' ? 'White' : 'Black'} to move`;
+
+            if (scoutMoveHistory.length === 0) {
+                moveList.innerHTML = '<div class="scout-move-empty">Play a move on the board to build the move list.</div>';
+                return;
+            }
+
+            const rows = [];
+            for (let i = 0; i < scoutMoveHistory.length; i += 2) {
+                const whitePly = i + 1;
+                const blackPly = i + 2;
+                const whiteMove = scoutMoveHistory[i];
+                const blackMove = scoutMoveHistory[i + 1];
+                rows.push(`<tr>
+                    <th scope="row">${Math.floor(i / 2) + 1}.</th>
+                    <td><button type="button" class="scout-move-cell${scoutMoveIndex === whitePly ? ' active' : ''}"
+                        onclick="setScoutPosition(${whitePly})" aria-label="Go to move ${whitePly}, ${whiteMove.san}">${whiteMove.san}</button></td>
+                    <td>${blackMove ? `<button type="button" class="scout-move-cell${scoutMoveIndex === blackPly ? ' active' : ''}"
+                        onclick="setScoutPosition(${blackPly})" aria-label="Go to move ${blackPly}, ${blackMove.san}">${blackMove.san}</button>` : ''}</td>
+                </tr>`);
+            }
+            moveList.innerHTML = `<table class="scout-move-table" aria-label="Played moves">
+                <thead><tr><th scope="col">#</th><th scope="col">White</th><th scope="col">Black</th></tr></thead>
+                <tbody>${rows.join('')}</tbody>
+            </table>`;
+        }
+
+        function setScoutTab(tab, targetId) {
+            document.querySelectorAll('.scout-tab').forEach(item => {
+                const isActive = item === tab;
+                item.classList.toggle('active', isActive);
+                item.setAttribute('aria-selected', String(isActive));
+            });
+
+            const target = document.getElementById(targetId);
+            if (!target || !target.classList.contains('scout-tab-panel')) return;
+            scoutActiveTab = targetId;
+            document.querySelectorAll('.scout-tab-panel').forEach(panel => {
+                panel.hidden = panel !== target;
+            });
+            updateScoutTabContent();
+        }
+
+        function updateScoutTabContent() {
+            const pgnOutput = document.getElementById('scoutPgnOutput');
+            const movesSummary = document.getElementById('scoutMovesSummary');
+            if (pgnOutput && movesSummary) {
+                pgnOutput.value = scoutChessGame.pgn();
+                const moveCount = scoutMoveIndex;
+                movesSummary.textContent = moveCount
+                    ? `${moveCount} ${moveCount === 1 ? 'half-move' : 'half-moves'} · ${scoutChessGame.turn() === 'w' ? 'White' : 'Black'} to move · ${scoutChessGame.fen()}`
+                    : `Starting position · ${scoutChessGame.fen()}`;
+            }
+            updateScoutReport();
+            if (scoutActiveTab === 'scoutBookPane' && scoutLichessAccessToken) {
+                fetchScoutOpeningBook(false);
+            }
+        }
+
+        function updateScoutReport() {
+            const data = scoutExplorerData;
+            const database = document.getElementById('scoutBookDatabase')?.value || 'lichess';
+            const isCurrentPosition = data && data.fen === scoutChessGame.fen()
+                && data.database === database
+                && data.queryKey === buildScoutExplorerQuery().key;
+            document.getElementById('scoutReportGames').textContent = isCurrentPosition
+                ? formatScoutCount(data.white + data.draws + data.black)
+                : '—';
+            document.getElementById('scoutReportOpening').textContent = isCurrentPosition
+                ? (data.openingName || 'Unclassified')
+                : '—';
+            document.getElementById('scoutReportWhite').textContent = isCurrentPosition
+                ? `${formatScoutCount(data.white)} (${formatScoutPercent(data.white, data)})`
+                : '—';
+            document.getElementById('scoutReportDraws').textContent = isCurrentPosition
+                ? `${formatScoutCount(data.draws)} (${formatScoutPercent(data.draws, data)})`
+                : '—';
+            document.getElementById('scoutReportBlack').textContent = isCurrentPosition
+                ? `${formatScoutCount(data.black)} (${formatScoutPercent(data.black, data)})`
+                : '—';
+            document.getElementById('scoutReportTurn').textContent =
+                scoutChessGame.turn() === 'w' ? 'White' : 'Black';
+            document.getElementById('scoutReportStatus').textContent = isCurrentPosition
+                ? `Dataset: ${data.database === 'masters' ? 'Lichess Masters' : 'Lichess rated games'} · ${data.fen}`
+                : scoutLichessAccessToken
+                    ? 'Open the Opening book tab to load the current position.'
+                    : 'Connect to Lichess and open the book tab to load database totals.';
+        }
+
+        function formatScoutCount(value) {
+            return new Intl.NumberFormat().format(value);
+        }
+
+        function formatScoutPercent(value, data) {
+            const total = data.white + data.draws + data.black;
+            return total ? `${(value * 100 / total).toFixed(1)}%` : '0.0%';
+        }
+
+        function buildScoutExplorerQuery() {
+            const database = document.getElementById('scoutBookDatabase')?.value || 'lichess';
+            const params = new URLSearchParams({
+                fen: scoutChessGame.fen(),
+                moves: '15'
+            });
+            if (database === 'lichess') {
+                params.set('variant', 'standard');
+                const speeds = document.getElementById('scoutBookSpeeds')?.value;
+                const ratings = document.getElementById('scoutBookRatings')?.value;
+                if (speeds) params.set('speeds', speeds);
+                if (ratings) params.set('ratings', ratings);
+            }
+            return {
+                database,
+                fen: scoutChessGame.fen(),
+                url: `https://explorer.lichess.org/${database}?${params.toString()}`,
+                key: `${database}:${params.toString()}`
+            };
+        }
+
+        function updateScoutBookFilters() {
+            const isLichess = document.getElementById('scoutBookDatabase').value === 'lichess';
+            document.getElementById('scoutLichessBookFilters').hidden = !isLichess;
+            updateScoutReport();
+            if (scoutActiveTab === 'scoutBookPane') fetchScoutOpeningBook(true);
+        }
+
+        function updateScoutAuthUi(message = '') {
+            const isConnected = Boolean(scoutLichessAccessToken);
+            const redirectError = getScoutOAuthRedirectError();
+            document.getElementById('scoutAuthHeading').textContent =
+                isConnected ? 'Lichess connected' : 'Lichess not connected';
+            document.getElementById('scoutAuthDescription').textContent = isConnected
+                ? 'Your access token is kept in memory for this page only and is not saved to your account or browser storage.'
+                : 'Connect to Lichess in a separate sign-in window. Your dashboard stays open, and your password is entered only on Lichess.';
+            document.getElementById('scoutConnectButton').hidden = isConnected;
+            document.getElementById('scoutConnectButton').disabled = !isConnected && Boolean(redirectError);
+            document.getElementById('scoutDisconnectButton').hidden = !isConnected;
+            document.getElementById('scoutAuthStatus').textContent = message
+                || (isConnected
+                    ? 'Connected. You can load Lichess games or Masters database data.'
+                    : redirectError || '');
+            if (!isConnected) {
+                document.getElementById('scoutBookStatus').textContent =
+                    'Connect to Lichess to load opening data.';
+                document.getElementById('scoutBookResults').replaceChildren();
+            }
+            updateScoutReport();
+        }
+
+        function getScoutOAuthRedirectError() {
+            if (location.protocol === 'file:') {
+                return 'This page is open directly from disk (file://), which Lichess cannot use for OAuth. Serve the project over localhost or open its HTTPS site, then connect again. For local testing, run `python -m http.server 8765` from the repository folder and open `http://127.0.0.1:8765/chessdashboard/chessdashboard.html`.';
+            }
+            if (!['http:', 'https:'].includes(location.protocol)) {
+                return 'Lichess OAuth requires an HTTP or HTTPS page URL. Open this dashboard from localhost or its HTTPS site.';
+            }
+            if (!window.isSecureContext || !window.crypto?.subtle) {
+                return 'Lichess sign-in requires HTTPS or localhost and browser support for secure cryptography.';
+            }
+            return '';
+        }
+
+        function scoutBase64Url(bytes) {
+            let binary = '';
+            bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+            return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
+        async function startScoutLichessOAuth() {
+            const status = document.getElementById('scoutAuthStatus');
+            const redirectError = getScoutOAuthRedirectError();
+            if (redirectError) {
+                status.textContent = redirectError;
+                return;
+            }
+            if (scoutOAuthPopup && !scoutOAuthPopup.closed) {
+                status.textContent = 'Lichess sign-in is already open in another window.';
+                scoutOAuthPopup.focus();
+                return;
+            }
+
+            const popup = window.open(
+                'about:blank',
+                'chessAiLichessOAuth',
+                'popup,width=520,height=720,resizable=yes,scrollbars=yes'
+            );
+            if (!popup) {
+                status.textContent = 'Your browser blocked the Lichess sign-in window. Allow pop-ups for this Chess-AI site, then try again.';
+                return;
+            }
+            scoutOAuthPopup = popup;
+            scoutOAuthPopupMonitor = window.setInterval(() => {
+                if (scoutOAuthPopup !== popup || !popup.closed) return;
+                window.clearInterval(scoutOAuthPopupMonitor);
+                scoutOAuthPopupMonitor = null;
+                scoutOAuthPopup = null;
+                if (!scoutLichessAccessToken) {
+                    status.textContent = 'The Lichess sign-in window was closed before the account was connected.';
+                }
+            }, 500);
+            status.textContent = 'Preparing a secure Lichess sign-in window…';
+
+            try {
+                const verifierBytes = crypto.getRandomValues(new Uint8Array(32));
+                const stateBytes = crypto.getRandomValues(new Uint8Array(24));
+                const verifier = scoutBase64Url(verifierBytes);
+                const state = scoutBase64Url(stateBytes);
+                const challengeDigest = await crypto.subtle.digest(
+                    'SHA-256',
+                    new TextEncoder().encode(verifier)
+                );
+                const challenge = scoutBase64Url(new Uint8Array(challengeDigest));
+                const redirect = new URL(location.href);
+                redirect.search = '';
+                redirect.hash = '';
+                const redirectUri = redirect.href;
+                popup.sessionStorage.setItem(LICHESS_OAUTH_PENDING_KEY, JSON.stringify({
+                    verifier,
+                    state,
+                    redirectUri
+                }));
+
+                const authorization = new URL('https://lichess.org/oauth');
+                authorization.searchParams.set('response_type', 'code');
+                authorization.searchParams.set('client_id', LICHESS_CLIENT_ID);
+                authorization.searchParams.set('redirect_uri', redirectUri);
+                authorization.searchParams.set('code_challenge_method', 'S256');
+                authorization.searchParams.set('code_challenge', challenge);
+                authorization.searchParams.set('state', state);
+                popup.location.replace(authorization.href);
+                status.textContent = 'Sign in to Lichess in the new window. This dashboard will stay open.';
+            } catch (error) {
+                window.clearInterval(scoutOAuthPopupMonitor);
+                scoutOAuthPopupMonitor = null;
+                scoutOAuthPopup = null;
+                popup.close();
+                status.textContent = 'Could not start Lichess sign-in. Check browser storage permissions and try again.';
+            }
+        }
+
+        function notifyScoutOAuthOpener(payload) {
+            if (!window.opener || window.opener.closed) return false;
+            window.opener.postMessage({
+                type: 'chess-ai-lichess-oauth',
+                ...payload
+            }, location.origin);
+            window.close();
+            return true;
+        }
+
+        function initializeScoutOAuthMessaging() {
+            window.addEventListener('message', event => {
+                if (event.origin !== location.origin || event.source !== scoutOAuthPopup
+                    || event.data?.type !== 'chess-ai-lichess-oauth') return;
+
+                window.clearInterval(scoutOAuthPopupMonitor);
+                scoutOAuthPopupMonitor = null;
+                scoutOAuthPopup = null;
+                if (typeof event.data.accessToken !== 'string' || !event.data.accessToken) {
+                    document.getElementById('scoutAuthStatus').textContent =
+                        typeof event.data.error === 'string'
+                            ? event.data.error
+                            : 'Lichess sign-in did not complete. Try connecting again.';
+                    return;
+                }
+
+                scoutLichessAccessToken = event.data.accessToken;
+                updateScoutAuthUi('Lichess connected. Your dashboard stayed open during sign-in.');
+                setScoutTab(document.querySelector('.scout-tab[aria-label="Opening book"]'), 'scoutBookPane');
+            });
+        }
+
+        async function handleScoutOAuthCallback() {
+            const callbackUrl = new URL(location.href);
+            const code = callbackUrl.searchParams.get('code');
+            const returnedState = callbackUrl.searchParams.get('state');
+            const oauthError = callbackUrl.searchParams.get('error');
+            const oauthErrorDescription = callbackUrl.searchParams.get('error_description');
+            if (!code && !oauthError) return;
+
+            ['code', 'state', 'error', 'error_description'].forEach(key => callbackUrl.searchParams.delete(key));
+            history.replaceState(history.state, '', callbackUrl.href);
+
+            let pending;
+            try {
+                pending = JSON.parse(sessionStorage.getItem(LICHESS_OAUTH_PENDING_KEY) || 'null');
+            } catch (error) {
+                sessionStorage.removeItem(LICHESS_OAUTH_PENDING_KEY);
+                updateScoutAuthUi('Could not read the pending sign-in request. Start Lichess sign-in again.');
+                return;
+            }
+            sessionStorage.removeItem(LICHESS_OAUTH_PENDING_KEY);
+
+            if (oauthError) {
+                const message = `Lichess sign-in was not completed: ${oauthErrorDescription || oauthError}`;
+                notifyScoutOAuthOpener({ error: message });
+                updateScoutAuthUi(message);
+                return;
+            }
+            if (!pending || !pending.verifier || !pending.state || pending.state !== returnedState) {
+                const message = 'Lichess sign-in verification failed. Start the connection again.';
+                notifyScoutOAuthOpener({ error: message });
+                updateScoutAuthUi(message);
+                return;
+            }
+
+            const form = new URLSearchParams({
+                grant_type: 'authorization_code',
+                code,
+                code_verifier: pending.verifier,
+                redirect_uri: pending.redirectUri,
+                client_id: LICHESS_CLIENT_ID
+            });
+            try {
+                const response = await fetch('https://lichess.org/api/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: form
+                });
+                const result = await response.json();
+                if (!response.ok || typeof result.access_token !== 'string' || !result.access_token) {
+                    const reason = typeof result.error_description === 'string'
+                        ? result.error_description
+                        : 'Lichess did not return an access token.';
+                    const message = `Could not connect to Lichess: ${reason}`;
+                    notifyScoutOAuthOpener({ error: message });
+                    updateScoutAuthUi(message);
+                    return;
+                }
+                scoutLichessAccessToken = result.access_token;
+                if (notifyScoutOAuthOpener({ accessToken: result.access_token })) return;
+                updateScoutAuthUi('Connected successfully. The token will be cleared when you disconnect or close this page.');
+                setScoutTab(document.querySelector('.scout-tab[aria-label="Opening book"]'), 'scoutBookPane');
+            } catch (error) {
+                const message = 'Could not exchange the sign-in code with Lichess. Check your connection and try again.';
+                notifyScoutOAuthOpener({ error: message });
+                updateScoutAuthUi(message);
+            }
+        }
+
+        async function disconnectScoutLichess() {
+            if (!scoutLichessAccessToken) return;
+            try {
+                const response = await fetch('https://lichess.org/api/token', {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${scoutLichessAccessToken}` }
+                });
+                if (!response.ok) {
+                    document.getElementById('scoutAuthStatus').textContent =
+                        `Lichess could not revoke this token (HTTP ${response.status}). It remains active for this page.`;
+                    return;
+                }
+                scoutExplorerAbortController?.abort();
+                scoutExplorerAbortController = null;
+                scoutExplorerRequestKey = '';
+                scoutLichessAccessToken = null;
+                scoutExplorerData = null;
+                scoutExplorerCache.clear();
+                updateScoutAuthUi('Disconnected and revoked the Lichess access token.');
+            } catch (error) {
+                document.getElementById('scoutAuthStatus').textContent =
+                    'Could not reach Lichess to revoke the token. It remains active for this page.';
+            }
+        }
+
+        async function fetchScoutOpeningBook(forceRefresh = false) {
+            if (!scoutLichessAccessToken) {
+                document.getElementById('scoutBookStatus').textContent =
+                    'Connect to Lichess in the User tab before loading Explorer data.';
+                return;
+            }
+            const query = buildScoutExplorerQuery();
+            const cached = scoutExplorerCache.get(query.key);
+            if (!forceRefresh && cached && Date.now() - cached.fetchedAt < 120000) {
+                scoutExplorerData = cached.data;
+                renderScoutExplorerData(cached.data, query);
+                updateScoutReport();
+                return;
+            }
+            if (!forceRefresh && scoutExplorerAbortController && scoutExplorerRequestKey === query.key) return;
+
+            scoutExplorerAbortController?.abort();
+            scoutExplorerAbortController = new AbortController();
+            scoutExplorerRequestKey = query.key;
+            const requestId = ++scoutExplorerRequestId;
+            const status = document.getElementById('scoutBookStatus');
+            const results = document.getElementById('scoutBookResults');
+            scoutExplorerData = null;
+            status.textContent = 'Loading opening statistics from Lichess…';
+            results.replaceChildren();
+            updateScoutReport();
+
+            try {
+                const response = await fetch(query.url, {
+                    headers: { Authorization: `Bearer ${scoutLichessAccessToken}` },
+                    signal: scoutExplorerAbortController.signal
+                });
+                if (requestId !== scoutExplorerRequestId) return;
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        scoutLichessAccessToken = null;
+                        updateScoutAuthUi('Lichess rejected the token. Connect again to continue.');
+                    }
+                    status.textContent = response.status === 401
+                        ? 'Lichess rejected the token. Reconnect from the User tab.'
+                        : response.status === 429
+                            ? 'Lichess rate limit reached. Wait briefly, then refresh.'
+                            : `Lichess Opening Explorer returned HTTP ${response.status}. Try again later.`;
+                    return;
+                }
+
+                const data = await response.json();
+                if (requestId !== scoutExplorerRequestId) return;
+                const validCount = value => Number.isSafeInteger(value) && value >= 0;
+                if (!validCount(data.white) || !validCount(data.draws) || !validCount(data.black)
+                    || !Array.isArray(data.moves)
+                    || data.moves.some(move => !move || typeof move.uci !== 'string'
+                        || typeof move.san !== 'string'
+                        || !validCount(move.white) || !validCount(move.draws) || !validCount(move.black))) {
+                    status.textContent = 'Lichess returned opening data in an unexpected format. No counts were displayed.';
+                    return;
+                }
+                if (requestId !== scoutExplorerRequestId) return;
+                const normalizedData = {
+                    ...data,
+                    fen: query.fen,
+                    database: query.database,
+                    queryKey: query.key,
+                    openingName: typeof data.opening?.name === 'string' ? data.opening.name : ''
+                };
+                scoutExplorerCache.set(query.key, { data: normalizedData, fetchedAt: Date.now() });
+                if (scoutExplorerCache.size > 80) {
+                    scoutExplorerCache.delete(scoutExplorerCache.keys().next().value);
+                }
+                scoutExplorerData = normalizedData;
+                renderScoutExplorerData(normalizedData, query);
+                updateScoutReport();
+            } catch (error) {
+                if (error.name === 'AbortError' || requestId !== scoutExplorerRequestId) return;
+                status.textContent = 'Could not reach Lichess Opening Explorer. Check your connection and try again.';
+            } finally {
+                if (requestId === scoutExplorerRequestId) {
+                    scoutExplorerAbortController = null;
+                    scoutExplorerRequestKey = '';
+                }
+            }
+        }
+
+        function renderScoutExplorerData(data, query) {
+            const status = document.getElementById('scoutBookStatus');
+            const results = document.getElementById('scoutBookResults');
+            const total = data.white + data.draws + data.black;
+            const summary = document.createElement('div');
+            summary.className = 'scout-book-summary';
+            const sourceLabel = query.database === 'masters' ? 'Lichess Masters' : 'Lichess rated games';
+            const title = data.openingName ? `${data.openingName} · ` : '';
+            summary.textContent = `${title}${formatScoutCount(total)} games · ${sourceLabel}`;
+
+            const table = document.createElement('table');
+            table.className = 'scout-book-table';
+            table.setAttribute('aria-label', 'Opening moves and game statistics');
+            table.innerHTML = '<thead><tr><th scope="col">Move</th><th scope="col">Games</th><th scope="col">W / D / B</th><th scope="col">Avg.</th></tr></thead>';
+            const body = document.createElement('tbody');
+            for (const move of data.moves) {
+                const row = document.createElement('tr');
+                const moveCell = document.createElement('td');
+                const moveButton = document.createElement('button');
+                moveButton.type = 'button';
+                moveButton.className = 'scout-book-move';
+                moveButton.textContent = move.san;
+                moveButton.setAttribute('aria-label', `Play ${move.san}, ${formatScoutCount(move.white + move.draws + move.black)} games`);
+                moveButton.addEventListener('click', () => playScoutExplorerMove(move.uci));
+                moveCell.appendChild(moveButton);
+
+                const moveTotal = move.white + move.draws + move.black;
+                const countCell = document.createElement('td');
+                countCell.className = 'scout-book-row-count';
+                countCell.textContent = formatScoutCount(moveTotal);
+
+                const resultsCell = document.createElement('td');
+                const bar = document.createElement('div');
+                bar.className = 'scout-result-bar';
+                [move.white, move.draws, move.black].forEach(value => {
+                    const segment = document.createElement('span');
+                    segment.style.width = `${moveTotal ? value * 100 / moveTotal : 0}%`;
+                    bar.appendChild(segment);
+                });
+                bar.setAttribute('aria-label',
+                    `White wins ${formatScoutPercent(move.white, move)}, draws ${formatScoutPercent(move.draws, move)}, black wins ${formatScoutPercent(move.black, move)}`);
+                resultsCell.appendChild(bar);
+                const legend = document.createElement('div');
+                legend.className = 'scout-result-legend';
+                legend.textContent = `${formatScoutPercent(move.white, move)} · ${formatScoutPercent(move.draws, move)} · ${formatScoutPercent(move.black, move)}`;
+                resultsCell.appendChild(legend);
+
+                const ratingCell = document.createElement('td');
+                ratingCell.textContent = Number.isFinite(move.averageRating)
+                    ? String(Math.round(move.averageRating))
+                    : '—';
+                row.append(moveCell, countCell, resultsCell, ratingCell);
+                body.appendChild(row);
+            }
+            table.appendChild(body);
+            results.replaceChildren(summary);
+            if (data.moves.length) {
+                results.appendChild(table);
+            } else {
+                const empty = document.createElement('div');
+                empty.className = 'scout-book-empty';
+                empty.textContent = 'No moves are listed for this position and filter combination.';
+                results.appendChild(empty);
+            }
+            status.textContent = `Position: ${query.fen}`;
+            updateScoutReport();
+        }
+
+        function playScoutExplorerMove(uci) {
+            if (!/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(uci)) {
+                document.getElementById('scoutBookStatus').textContent =
+                    'Lichess returned an invalid move notation; the board was not changed.';
+                return;
+            }
+            playScoutMove(uci.slice(0, 2), uci.slice(2, 4), null, uci[4] || 'q');
+        }
+
+        async function copyScoutNotation(type) {
+            const text = type === 'fen' ? scoutChessGame.fen() : scoutChessGame.pgn();
+            const status = document.getElementById('scoutMovesStatus');
+            try {
+                await navigator.clipboard.writeText(text);
+                status.textContent = `${type.toUpperCase()} copied to clipboard.`;
+            } catch (error) {
+                status.textContent = 'Clipboard access was denied. Select and copy the notation manually.';
+            }
+        }
+
+        function flipScoutBoard() {
+            scoutBoardFlipped = !scoutBoardFlipped;
+            scoutSelectedSquare = null;
+            renderScoutBoard();
+            document.getElementById('scoutControlsStatus').textContent =
+                scoutBoardFlipped ? 'Board flipped to Black’s perspective.' : 'Board returned to White’s perspective.';
+        }
+
+        function clearScoutMoves() {
+            scoutChessGame = new Chess();
+            scoutMoveHistory = [];
+            scoutMoveIndex = 0;
+            scoutSelectedSquare = null;
+            renderScoutBoard();
+            document.getElementById('scoutControlsStatus').textContent = 'Move line cleared.';
+        }
+
+        function toggleScoutBoardTheme() {
+            scoutLightBoard = !scoutLightBoard;
+            renderScoutBoard();
+            document.getElementById('scoutControlsStatus').textContent =
+                scoutLightBoard ? 'Light board colors enabled.' : 'Original board colors restored.';
+        }
+
+        function selectScoutSource(sourceInput) {
+        }
+
+        function selectScoutSource(sourceInput) {
+            const playerStep = document.getElementById('scoutPlayerStep');
+            const usernameInput = document.getElementById('scoutInput');
+            const isLichess = sourceInput.value === 'lichess';
+            const sourceName = isLichess ? 'Lichess' : 'Chess.com';
+
+            usernameInput.value = '';
+            document.querySelectorAll('input[name="scoutColor"]').forEach(input => {
+                input.checked = false;
+            });
+            playerStep.open = true;
+            document.getElementById('scoutUsernameLabel').textContent = `${sourceName} username`;
+            usernameInput.placeholder = `Enter your ${sourceName} username`;
+            document.getElementById('scoutSearchStatus').textContent = '';
+            updateScoutProgress();
+            usernameInput.focus({ preventScroll: true });
+        }
+
+        function updateScoutProgress() {
+            const hasSource = Boolean(document.querySelector('input[name="scoutSource"]:checked'));
+            const hasUsername = document.getElementById('scoutInput').value.trim().length > 0;
+            const hasColor = Boolean(document.querySelector('input[name="scoutColor"]:checked'));
+
+            document.getElementById('scoutPlayerStep').hidden = !hasSource;
+            document.getElementById('scoutFilterStep').hidden = !hasSource || !hasUsername;
+            document.getElementById('scoutAnalyzeStep').hidden = !hasSource || !hasUsername || !hasColor;
+
+            if (!hasUsername) {
+                document.querySelectorAll('input[name="scoutColor"]').forEach(input => {
+                    input.checked = false;
+                });
+            }
         }
 
         function openSettingsModal() {
@@ -1515,15 +3583,29 @@
         }
 
         function performScoutSearch() {
-            const query = document.getElementById('scoutInput').value.trim();
-            if (!query) {
-                showDashToast('Please enter a player username');
+            const sourceInput = document.querySelector('input[name="scoutSource"]:checked');
+            if (!sourceInput) {
+                document.getElementById('scoutSearchStatus').textContent = 'Choose Lichess or Chess.com first.';
                 return;
             }
-            showDashToast(`Scouting preparation data for ${query}...`);
-            setTimeout(() => {
-                showDashToast(`Loaded recent repertoire matches for ${query}`);
-            }, 900);
+
+            const query = document.getElementById('scoutInput').value.trim();
+            if (!query) {
+                document.getElementById('scoutSearchStatus').textContent = 'Enter a player username to continue.';
+                document.getElementById('scoutInput').focus({ preventScroll: true });
+                return;
+            }
+
+            const colorInput = document.querySelector('input[name="scoutColor"]:checked');
+            if (!colorInput) {
+                document.getElementById('scoutSearchStatus').textContent = 'Choose White or Black games to continue.';
+                return;
+            }
+
+            const sourceName = sourceInput.value === 'lichess' ? 'Lichess' : 'Chess.com';
+            const colorName = colorInput.value === 'white' ? 'White' : 'Black';
+            document.getElementById('scoutSearchStatus').textContent =
+                `Player-game analysis for ${sourceName} username ${query} as ${colorName} is not connected yet. The Opening Book tab uses Lichess Explorer position statistics, not this player's personal games.`;
         }
 
         function startPracticeSession(type) {
@@ -1633,6 +3715,11 @@
 
         // Initialize on DOM ready
         window.addEventListener('DOMContentLoaded', () => {
+            renderScoutBoard();
+            initializeScoutResizer();
+            initializeScoutOAuthMessaging();
+            updateScoutAuthUi();
+            handleScoutOAuthCallback();
             initUserSession();
         });
     </script>
