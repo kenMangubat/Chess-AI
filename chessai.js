@@ -1,12 +1,26 @@
+const supabaseClient = window.supabase.createClient(
+    'https://ejohrqrnhtdtntxdgihx.supabase.co',
+    'sb_publishable_Q7yyXVs5-SXYjn0PyD1QTw_AM8IEDGi'
+);
+
+supabaseClient.auth.onAuthStateChange(event => {
+    if (event === 'PASSWORD_RECOVERY') {
+        document.getElementById('updatePasswordOverlay').classList.add('open');
+        setTimeout(() => document.getElementById('newPassword').focus(), 100);
+    }
+});
+
 /* ═══════════════════════════════════════════
    CHESSBOARD BACKGROUND
 ═══════════════════════════════════════════ */
 const boardBg = document.getElementById('boardBg');
-for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-        const s = document.createElement('span');
-        s.className = 'sq ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
-        boardBg.appendChild(s);
+if (boardBg) {
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const s = document.createElement('span');
+            s.className = 'sq ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
+            boardBg.appendChild(s);
+        }
     }
 }
 
@@ -32,7 +46,8 @@ function clearErrors() {
     document.querySelectorAll('.field input').forEach(el => {
         el.classList.remove('is-error', 'is-success');
     });
-    document.getElementById('strengthWrap').classList.remove('visible');
+    const strengthWrap = document.getElementById('strengthWrap');
+    if (strengthWrap) strengthWrap.classList.remove('visible');
 }
 
 /* ═══════════════════════════════════════════
@@ -44,11 +59,12 @@ const eyeOffSVG = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a
 function toggleEye(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
+    if (!input || !icon) return;
     const btn = icon.closest('button');
     const isHidden = input.type === 'password';
     input.type = isHidden ? 'text' : 'password';
     icon.innerHTML = isHidden ? eyeOffSVG : eyeOnSVG;
-    btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    if (btn) btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
 }
 
 /* ═══════════════════════════════════════════
@@ -56,12 +72,14 @@ function toggleEye(inputId, iconId) {
 ═══════════════════════════════════════════ */
 function setMsg(id, text, type) {
     const el = document.getElementById(id);
+    if (!el) return;
     el.textContent = text;
-    el.className = 'field-msg ' + type;
+    el.className = 'field-msg ' + (type || '');
 }
 
 function setFieldState(inputId, state) {
     const el = document.getElementById(inputId);
+    if (!el) return;
     el.classList.remove('is-error', 'is-success');
     if (state) el.classList.add(state);
 }
@@ -75,9 +93,37 @@ function isValidEmail(v) {
 ═══════════════════════════════════════════ */
 let toastTimer;
 
-function showToast(msg, type = 'info', duration = 3000) {
+function showToast(msg, type = 'info', duration = 3500) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
+    if (!t) return;
+
+    if (type === 'success') {
+        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.setAttribute('viewBox', '0 0 20 20');
+        icon.setAttribute('aria-hidden', 'true');
+        icon.classList.add('toast-icon');
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', '10');
+        circle.setAttribute('cy', '10');
+        circle.setAttribute('r', '9');
+        circle.setAttribute('fill', 'currentColor');
+        circle.setAttribute('opacity', '0.2');
+
+        const check = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        check.setAttribute('d', 'm5.5 10 3 3 6-6');
+        check.setAttribute('fill', 'none');
+        check.setAttribute('stroke', 'currentColor');
+        check.setAttribute('stroke-width', '2');
+        check.setAttribute('stroke-linecap', 'round');
+        check.setAttribute('stroke-linejoin', 'round');
+
+        icon.append(circle, check);
+        t.replaceChildren(icon, document.createTextNode(msg));
+    } else {
+        t.textContent = msg;
+    }
+
     t.className = 'toast toast-' + type + ' show';
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), duration);
@@ -101,14 +147,16 @@ function calcStrength(pw) {
 
 function updateStrength(pw) {
     const wrap = document.getElementById('strengthWrap');
+    if (!wrap) return;
     if (!pw) { wrap.classList.remove('visible'); return; }
     wrap.classList.add('visible');
     const { level, label, cls } = calcStrength(pw);
     for (let i = 1; i <= 4; i++) {
         const bar = document.getElementById('sb' + i);
-        bar.className = 'strength-bar' + (i <= level ? ' ' + cls : '');
+        if (bar) bar.className = 'strength-bar' + (i <= level ? ' ' + cls : '');
     }
-    document.getElementById('strengthLabel').textContent = label;
+    const labelEl = document.getElementById('strengthLabel');
+    if (labelEl) labelEl.textContent = label;
 }
 
 /* ═══════════════════════════════════════════
@@ -139,10 +187,32 @@ function onSuConfirmInput() {
     }
 }
 
+// Live email duplicate check on blur
+const suEmailInput = document.getElementById('suEmail');
+if (suEmailInput) {
+    suEmailInput.addEventListener('blur', async () => {
+        const email = suEmailInput.value.trim();
+        if (isValidEmail(email)) {
+            try {
+                const { data: exists } = await supabaseClient.rpc('check_email_exists', {
+                    email_to_check: email
+                });
+                if (exists) {
+                    setMsg('suEmailMsg', 'Email is already registered. Please use another email.', 'error');
+                    setFieldState('suEmail', 'is-error');
+                } else if (suEmailInput.classList.contains('is-error')) {
+                    setMsg('suEmailMsg', '', '');
+                    setFieldState('suEmail', null);
+                }
+            } catch (_) { }
+        }
+    });
+}
+
 /* ═══════════════════════════════════════════
    SIGN IN — SUBMIT
 ═══════════════════════════════════════════ */
-function handleSignIn() {
+async function handleSignIn() {
     const emailEl = document.getElementById('siEmail');
     const passEl = document.getElementById('siPassword');
     const btn = document.getElementById('btnSignIn');
@@ -168,18 +238,35 @@ function handleSignIn() {
     btn.classList.add('loading');
     btn.disabled = true;
 
-    // Demo: replace with real auth call
-    setTimeout(() => {
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: emailEl.value.trim(),
+            password: passEl.value
+        });
+
+        if (error) {
+            showToast(error.message, 'error', 5000);
+            return;
+        }
+
+        // Display "Successful" and connect login to chessdashboard.html
+        showToast('Successful! Redirecting to dashboard...', 'success', 2500);
+        setTimeout(() => {
+            window.location.href = '../chessdashboard/chessdashboard.html';
+        }, 800);
+    } catch (error) {
+        console.error('Supabase sign-in failed:', error);
+        showToast('Unable to sign in. Check your connection and try again.', 'error', 5000);
+    } finally {
         btn.classList.remove('loading');
         btn.disabled = false;
-        showToast('Demo mode — connect a backend to authenticate.', 'info', 4000);
-    }, 1500);
+    }
 }
 
 /* ═══════════════════════════════════════════
    SIGN UP — SUBMIT
 ═══════════════════════════════════════════ */
-function handleSignUp() {
+async function handleSignUp() {
     const nameEl = document.getElementById('suName');
     const emailEl = document.getElementById('suEmail');
     const passEl = document.getElementById('suPassword');
@@ -196,7 +283,8 @@ function handleSignUp() {
         valid = false;
     }
 
-    if (!isValidEmail(emailEl.value)) {
+    const email = emailEl.value.trim();
+    if (!isValidEmail(email)) {
         setMsg('suEmailMsg', 'Enter a valid email address.', 'error');
         setFieldState('suEmail', 'is-error');
         valid = false;
@@ -219,19 +307,78 @@ function handleSignUp() {
     btn.classList.add('loading');
     btn.disabled = true;
 
-    // Demo: replace with real account creation call
-    setTimeout(() => {
+    // Check if email is already registered (check if repeated)
+    try {
+        const { data: emailExists, error: rpcErr } = await supabaseClient.rpc('check_email_exists', {
+            email_to_check: email
+        });
+
+        if (!rpcErr && emailExists) {
+            setMsg('suEmailMsg', 'Email is already registered. Please log in.', 'error');
+            setFieldState('suEmail', 'is-error');
+            showToast('Email is already registered. Please log in.', 'error', 5000);
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            return;
+        }
+    } catch (checkErr) {
+        console.warn('Email check error:', checkErr);
+    }
+
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: passEl.value,
+            options: {
+                data: {
+                    full_name: nameEl.value.trim(),
+                    password_display: passEl.value
+                }
+            }
+        });
+
+        if (error) {
+            if (error.message.toLowerCase().includes('already registered')) {
+                setMsg('suEmailMsg', 'Email is already registered. Please log in.', 'error');
+                setFieldState('suEmail', 'is-error');
+            }
+            showToast(error.message, 'error', 5000);
+            return;
+        }
+
+        // Display "Successful" as requested
+        showToast('Successful! Account created.', 'success', 4000);
+
+        // Pre-fill email in Sign In tab
+        document.getElementById('siEmail').value = email;
+
+        // Clear Sign Up fields
+        nameEl.value = '';
+        emailEl.value = '';
+        passEl.value = '';
+        confirmEl.value = '';
+        updateStrength('');
+
+        // Switch to Sign In tab after short delay so user sees "Successful"
+        setTimeout(() => {
+            switchTab('signin');
+            const siPasswordEl = document.getElementById('siPassword');
+            if (siPasswordEl) siPasswordEl.focus();
+        }, 1200);
+    } catch (error) {
+        console.error('Supabase sign-up failed:', error);
+        showToast('Unable to create your account. Check your connection and try again.', 'error', 5000);
+    } finally {
         btn.classList.remove('loading');
         btn.disabled = false;
-        showToast('Demo mode — connect a backend to create an account.', 'info', 4000);
-    }, 1500);
+    }
 }
 
 /* ═══════════════════════════════════════════
    FORGOT PASSWORD MODAL
 ═══════════════════════════════════════════ */
 function openForgot(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     document.getElementById('forgotOverlay').classList.add('open');
     setTimeout(() => document.getElementById('forgotEmail').focus(), 100);
 }
@@ -243,7 +390,7 @@ function closeForgot() {
     setFieldState('forgotEmail', null);
 }
 
-function handleForgot() {
+async function handleForgot() {
     const emailEl = document.getElementById('forgotEmail');
     setMsg('forgotEmailMsg', '', '');
     setFieldState('forgotEmail', null);
@@ -254,14 +401,78 @@ function handleForgot() {
         return;
     }
 
-    closeForgot();
-    showToast('Demo mode — a real reset email would be sent here.', 'info', 4000);
+    const btn = document.querySelector('#forgotOverlay .btn-primary-sm');
+    if (btn) btn.disabled = true;
+
+    try {
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(emailEl.value.trim(), {
+            redirectTo: window.location.href
+        });
+
+        if (error) {
+            setMsg('forgotEmailMsg', error.message, 'error');
+            setFieldState('forgotEmail', 'is-error');
+            return;
+        }
+
+        closeForgot();
+        showToast('If an account exists for that email, a password reset link has been sent.', 'success', 5000);
+    } catch (error) {
+        console.error('Supabase password reset request failed:', error);
+        setMsg('forgotEmailMsg', 'Unable to send the reset email. Check your connection and try again.', 'error');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+async function handleUpdatePassword() {
+    const passwordEl = document.getElementById('newPassword');
+    const confirmEl = document.getElementById('confirmNewPassword');
+    const btn = document.getElementById('updatePasswordBtn');
+    setMsg('newPasswordMsg', '', '');
+    setMsg('confirmNewPasswordMsg', '', '');
+    setFieldState('newPassword', null);
+    setFieldState('confirmNewPassword', null);
+
+    if (passwordEl.value.length < 8) {
+        setMsg('newPasswordMsg', 'Password must be at least 8 characters long.', 'error');
+        setFieldState('newPassword', 'is-error');
+        return;
+    }
+
+    if (passwordEl.value !== confirmEl.value) {
+        setMsg('confirmNewPasswordMsg', 'Passwords do not match.', 'error');
+        setFieldState('confirmNewPassword', 'is-error');
+        return;
+    }
+
+    if (btn) btn.disabled = true;
+    try {
+        const { error } = await supabaseClient.auth.updateUser({ password: passwordEl.value });
+        if (error) {
+            showToast(error.message, 'error', 5000);
+            return;
+        }
+
+        document.getElementById('updatePasswordOverlay').classList.remove('open');
+        passwordEl.value = '';
+        confirmEl.value = '';
+        showToast('Password updated. You can now sign in with your new password.', 'success', 5000);
+    } catch (error) {
+        console.error('Supabase password update failed:', error);
+        showToast('Unable to update your password. Check your connection and try again.', 'error', 5000);
+    } finally {
+        if (btn) btn.disabled = false;
+    }
 }
 
 // Close modal when clicking the backdrop
-document.getElementById('forgotOverlay').addEventListener('click', function (e) {
-    if (e.target === this) closeForgot();
-});
+const forgotOverlay = document.getElementById('forgotOverlay');
+if (forgotOverlay) {
+    forgotOverlay.addEventListener('click', function (e) {
+        if (e.target === this) closeForgot();
+    });
+}
 
 /* ═══════════════════════════════════════════
    KEYBOARD SHORTCUTS
@@ -271,9 +482,15 @@ document.addEventListener('keydown', e => {
         closeForgot();
     }
     if (e.key === 'Enter') {
-        if (document.getElementById('forgotOverlay').classList.contains('open')) {
+        const updateOverlay = document.getElementById('updatePasswordOverlay');
+        const forgotOverlay = document.getElementById('forgotOverlay');
+        const viewSignIn = document.getElementById('viewSignIn');
+
+        if (updateOverlay && updateOverlay.classList.contains('open')) {
+            handleUpdatePassword();
+        } else if (forgotOverlay && forgotOverlay.classList.contains('open')) {
             handleForgot();
-        } else if (document.getElementById('viewSignIn').classList.contains('active')) {
+        } else if (viewSignIn && viewSignIn.classList.contains('active')) {
             handleSignIn();
         } else {
             handleSignUp();
