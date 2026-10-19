@@ -27,7 +27,7 @@ if (boardBg) {
 /* ═══════════════════════════════════════════
    TAB SWITCHING
 ═══════════════════════════════════════════ */
-function switchTab(mode) {
+function switchTab(mode, preserveValues = false) {
     const isSignIn = mode === 'signin';
     document.getElementById('tabSignIn').classList.toggle('active', isSignIn);
     document.getElementById('tabSignUp').classList.toggle('active', !isSignIn);
@@ -36,6 +36,58 @@ function switchTab(mode) {
     document.getElementById('viewSignIn').classList.toggle('active', isSignIn);
     document.getElementById('viewSignUp').classList.toggle('active', !isSignIn);
     clearErrors();
+    if (!preserveValues) {
+        clearFormInputs();
+    }
+}
+
+function clearFormInputs() {
+    // Reset Sign In inputs
+    const siEmail = document.getElementById('siEmail');
+    if (siEmail) siEmail.value = '';
+
+    const siPassword = document.getElementById('siPassword');
+    if (siPassword) {
+        siPassword.value = '';
+        siPassword.type = 'password';
+    }
+    const siEye = document.getElementById('siEye');
+    if (siEye) siEye.innerHTML = eyeOnSVG;
+    const siEyeBtn = document.getElementById('siEyeBtn');
+    if (siEyeBtn) siEyeBtn.setAttribute('aria-label', 'Show password');
+
+    const rememberMe = document.getElementById('rememberMe');
+    if (rememberMe) rememberMe.checked = false;
+
+    // Reset Sign Up inputs
+    const suName = document.getElementById('suName');
+    if (suName) suName.value = '';
+
+    const suEmail = document.getElementById('suEmail');
+    if (suEmail) suEmail.value = '';
+
+    const suPassword = document.getElementById('suPassword');
+    if (suPassword) {
+        suPassword.value = '';
+        suPassword.type = 'password';
+    }
+    const suEye = document.getElementById('suEye');
+    if (suEye) suEye.innerHTML = eyeOnSVG;
+    const suEyeBtn = document.getElementById('suEyeBtn');
+    if (suEyeBtn) suEyeBtn.setAttribute('aria-label', 'Show password');
+
+    const suConfirm = document.getElementById('suConfirm');
+    if (suConfirm) {
+        suConfirm.value = '';
+        suConfirm.type = 'password';
+    }
+    const suConfirmEye = document.getElementById('suConfirmEye');
+    if (suConfirmEye) suConfirmEye.innerHTML = eyeOnSVG;
+    const suConfirmEyeBtn = document.getElementById('suConfirmEyeBtn');
+    if (suConfirmEyeBtn) suConfirmEyeBtn.setAttribute('aria-label', 'Show confirm password');
+
+    // Reset password strength bar
+    updateStrength('');
 }
 
 function clearErrors() {
@@ -250,7 +302,7 @@ async function handleSignIn() {
         }
 
         // Display "Successful" and connect login to chessdashboard.html
-        showToast('Successful! Redirecting to dashboard...', 'success', 2500);
+        showToast('Successful!', 'success', 2500);
         setTimeout(() => {
             window.location.href = '../chessdashboard/chessdashboard.html';
         }, 800);
@@ -361,7 +413,8 @@ async function handleSignUp() {
 
         // Switch to Sign In tab after short delay so user sees "Successful"
         setTimeout(() => {
-            switchTab('signin');
+            switchTab('signin', true);
+            document.getElementById('siEmail').value = email;
             const siPasswordEl = document.getElementById('siPassword');
             if (siPasswordEl) siPasswordEl.focus();
         }, 1200);
@@ -475,13 +528,108 @@ if (forgotOverlay) {
 }
 
 /* ═══════════════════════════════════════════
+   QUOTE SLIDESHOW
+═══════════════════════════════════════════ */
+const CHESS_QUOTES = [
+    { text: 'Chess is life in miniature. Chess is struggle, chess is battles.', author: 'Garry Kasparov', role: 'World Chess Champion' },
+    { text: 'Perfectly correct chess exists only in theory.', author: 'Garry Kasparov', role: 'World Chess Champion' },
+    { text: 'One does not succeed by sticking to convention.', author: 'Garry Kasparov', role: 'World Chess Champion' },
+    { text: 'Chess is a fairy tale of 1,001 blunders.', author: 'Savielly Tartakower', role: 'Grandmaster' },
+    { text: 'When you see a good move, look for a better one.', author: 'Emanuel Lasker', role: 'World Chess Champion' },
+    { text: 'A good player is always lucky.', author: 'José Raúl Capablanca', role: 'World Chess Champion' },
+    { text: 'There are two kinds of sacrifices: sound ones and mine.', author: 'Mikhail Tal', role: 'World Chess Champion' },
+    { text: 'Chess is everything: art, science, and sport.', author: 'Anatoly Karpov', role: 'World Chess Champion' },
+    { text: 'Chess is war over the board.', author: 'Bobby Fischer', role: 'World Chess Champion' },
+    { text: 'The pawns are the soul of chess.', author: 'François-André Philidor', role: 'Chess Master' }
+];
+
+const QUOTE_INTERVAL_MS = 5000;
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function initQuoteSlideshow() {
+    const wrap = document.getElementById('heroQuoteWrap');
+    const quoteEl = document.getElementById('heroQuote');
+    const textEl = document.getElementById('heroQuoteText');
+    const authorEl = document.getElementById('heroQuoteAuthor');
+    const dotsEl = document.getElementById('quoteDots');
+    if (!wrap || !quoteEl || !textEl || !authorEl || !dotsEl) return;
+
+    let index = Math.floor(Math.random() * CHESS_QUOTES.length);
+    let advanceTimer = null;
+    let swapTimer = null;
+
+    function render(i, animate = true) {
+        index = (i + CHESS_QUOTES.length) % CHESS_QUOTES.length;
+        const q = CHESS_QUOTES[index];
+
+        dotsEl.querySelectorAll('.quote-dot').forEach((dot, n) => {
+            dot.classList.toggle('active', n === index);
+            dot.setAttribute('aria-current', n === index ? 'true' : 'false');
+        });
+
+        const apply = () => {
+            textEl.textContent = `“${q.text}”`;
+            authorEl.textContent = `— ${q.author}, ${q.role}`;
+            quoteEl.classList.remove('is-changing');
+        };
+
+        clearTimeout(swapTimer);
+        if (!animate || prefersReducedMotion) {
+            apply();
+            return;
+        }
+        quoteEl.classList.add('is-changing');
+        swapTimer = setTimeout(apply, 300);
+    }
+
+    function stop() {
+        if (advanceTimer) {
+            clearInterval(advanceTimer);
+            advanceTimer = null;
+        }
+    }
+
+    function start() {
+        stop();
+        if (document.hidden) return;
+        advanceTimer = setInterval(() => render(index + 1), QUOTE_INTERVAL_MS);
+    }
+
+    CHESS_QUOTES.forEach((_, n) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'quote-dot';
+        dot.setAttribute('aria-label', `Show quote ${n + 1} of ${CHESS_QUOTES.length}`);
+        dot.addEventListener('click', () => {
+            render(n);
+            start();
+        });
+        dotsEl.appendChild(dot);
+    });
+
+    wrap.addEventListener('mouseenter', stop);
+    wrap.addEventListener('mouseleave', start);
+    wrap.addEventListener('focusin', stop);
+    wrap.addEventListener('focusout', start);
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stop();
+        else start();
+    });
+
+    render(index, false);
+    start();
+}
+
+initQuoteSlideshow();
+
+/* ═══════════════════════════════════════════
    KEYBOARD SHORTCUTS
 ═══════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         closeForgot();
     }
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && e.target instanceof HTMLInputElement) {
         const updateOverlay = document.getElementById('updatePasswordOverlay');
         const forgotOverlay = document.getElementById('forgotOverlay');
         const viewSignIn = document.getElementById('viewSignIn');

@@ -244,10 +244,13 @@
                 </svg>
             </div>
 
-            <blockquote class="hero-quote">
-                <p class="hero-quote-text">"Chess is life in miniature. Chess is a struggle, chess battles."</p>
-                <footer class="hero-quote-author">— Garry Kasparov, World Chess Champion</footer>
-            </blockquote>
+            <div class="hero-quote-wrap" id="heroQuoteWrap">
+                <blockquote class="hero-quote" id="heroQuote">
+                    <p class="hero-quote-text" id="heroQuoteText">“Chess is life in miniature. Chess is struggle, chess is battles.”</p>
+                    <footer class="hero-quote-author" id="heroQuoteAuthor">— Garry Kasparov, World Chess Champion</footer>
+                </blockquote>
+                <div class="quote-dots" id="quoteDots"></div>
+            </div>
         </div>
 
         <!-- RIGHT FORM PANEL -->
@@ -510,7 +513,8 @@
                 <p class="field-msg" id="confirmNewPasswordMsg" role="alert"></p>
             </div>
             <div class="modal-actions">
-                <button class="btn-primary-sm" id="updatePasswordBtn" onclick="handleUpdatePassword()">Update password</button>
+                <button class="btn-primary-sm" id="updatePasswordBtn" onclick="handleUpdatePassword()">Update
+                    password</button>
             </div>
         </div>
     </div>
