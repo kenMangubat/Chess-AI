@@ -136,6 +136,13 @@
                     </span>
                     <span class="logo-name">Chess<span>-AI</span></span>
                 </a>
+                <div class="mobile-auth-actions" role="group" aria-label="Account access">
+                    <button class="mobile-auth-btn" type="button" aria-controls="authPanel" aria-haspopup="dialog"
+                        aria-expanded="false" onclick="openAuthPanel('signin')">Sign In</button>
+                    <button class="mobile-auth-btn mobile-auth-btn--primary" type="button"
+                        aria-controls="authPanel" aria-haspopup="dialog" aria-expanded="false"
+                        onclick="openAuthPanel('signup')">Sign Up</button>
+                </div>
             </nav>
 
             <div class="hero-body">
@@ -254,8 +261,14 @@
         </div>
 
         <!-- RIGHT FORM PANEL -->
-        <div class="form-panel">
+        <div class="form-panel" id="authPanel" onclick="handleAuthPanelBackdrop(event)">
             <div class="form-card">
+                <button class="auth-panel-close" type="button" aria-label="Close sign in panel"
+                    onclick="closeAuthPanel()">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m6 6 12 12M18 6 6 18" />
+                    </svg>
+                </button>
 
                 <!-- Mobile logo -->
                 <div class="mobile-logo">

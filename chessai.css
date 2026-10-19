@@ -128,6 +128,18 @@ a:hover {
 .hero-nav {
     position: relative;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.mobile-auth-actions {
+    display: none;
+}
+
+.auth-panel-close {
+    display: none;
 }
 
 .logo {
@@ -804,9 +816,51 @@ a:hover {
 
     .hero {
         display: flex;
-        flex: 0 0 auto;
-        gap: 24px;
-        padding: 24px 20px 18px;
+        flex: 1 0 auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        gap: 28px;
+        padding: max(20px, env(safe-area-inset-top)) 20px max(22px, env(safe-area-inset-bottom));
+    }
+
+    .hero-nav {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .mobile-auth-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .mobile-auth-btn {
+        padding: 8px 12px;
+        border: 1px solid rgba(110, 231, 183, 0.45);
+        border-radius: 8px;
+        background: rgba(17, 17, 24, 0.72);
+        color: var(--text);
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .mobile-auth-btn--primary {
+        border-color: var(--emerald);
+        background: var(--emerald);
+        color: #04110c;
+    }
+
+    .mobile-auth-btn:focus-visible,
+    .auth-panel-close:focus-visible {
+        outline: 2px solid var(--emerald-pale);
+        outline-offset: 3px;
+    }
+
+    .hero-body {
+        width: 100%;
+        margin: auto 0;
     }
 
     .hero-knight-display {
@@ -832,32 +886,119 @@ a:hover {
     }
 
     .form-panel {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 110;
         width: 100%;
-        flex: 1 0 auto;
+        height: 100vh;
+        height: 100dvh;
+        flex: none;
+        align-items: center;
+        justify-content: center;
         border-left: none;
-        padding: 24px 24px calc(32px + env(safe-area-inset-bottom));
-        justify-content: flex-start;
-        overflow: visible;
+        padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+        background: rgba(0, 0, 0, 0.38);
+        backdrop-filter: blur(2px);
+        overflow-y: auto;
+    }
+
+    .form-panel.open {
+        display: flex;
     }
 
     .form-card {
-        max-width: 100%;
+        position: relative;
+        width: 100%;
+        max-width: 440px;
+        max-height: calc(100vh - 32px);
+        max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        overflow-y: auto;
+        padding: 28px 22px 22px;
+        border: 1px solid rgba(110, 231, 183, 0.18);
+        border-radius: var(--radius-lg);
+        background: rgba(17, 17, 24, 0.86);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(18px);
+    }
+
+    .auth-panel-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(226, 232, 240, 0.16);
+        border-radius: 50%;
+        background: rgba(17, 17, 24, 0.7);
+        color: var(--text);
+        cursor: pointer;
+    }
+
+    .auth-panel-close svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
     }
 
     .mobile-logo {
-        display: none;
+        display: flex;
+        margin: 0 44px 22px 0;
+    }
+
+    .tab-bar {
+        margin-bottom: 24px;
     }
 }
 
 @media (max-width: 400px) {
-    .form-panel {
-        padding: 20px 18px calc(28px + env(safe-area-inset-bottom));
+    .hero {
+        padding-right: 16px;
+        padding-left: 16px;
     }
 
     .tab-btn {
         font-size: 0.82rem;
         padding: 8px 6px;
     }
+
+    .form-card {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+}
+
+@media (max-width: 360px) {
+    .logo {
+        gap: 7px;
+    }
+
+    .logo-knight {
+        width: 38px;
+        height: 38px;
+    }
+
+    .logo-name {
+        font-size: 1rem;
+    }
+
+    .mobile-auth-actions {
+        gap: 5px;
+    }
+
+    .mobile-auth-btn {
+        padding: 7px 9px;
+        font-size: 0.74rem;
+    }
+}
+
+body.auth-panel-open {
+    overflow: hidden;
 }
 
 .mobile-logo {

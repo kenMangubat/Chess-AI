@@ -41,6 +41,45 @@ function switchTab(mode, preserveValues = false) {
     }
 }
 
+let authPanelTrigger = null;
+
+function openAuthPanel(mode) {
+    const panel = document.getElementById('authPanel');
+    authPanelTrigger = document.activeElement;
+    switchTab(mode);
+    panel.classList.add('open');
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-modal', 'true');
+    panel.setAttribute('aria-label', mode === 'signin' ? 'Sign in' : 'Sign up');
+    document.body.classList.add('auth-panel-open');
+    document.querySelectorAll('.mobile-auth-btn').forEach(button => {
+        button.setAttribute('aria-expanded', 'true');
+    });
+
+    const input = document.getElementById(mode === 'signin' ? 'siEmail' : 'suName');
+    setTimeout(() => input.focus(), 50);
+}
+
+function closeAuthPanel() {
+    const panel = document.getElementById('authPanel');
+    if (!panel.classList.contains('open')) return;
+
+    panel.classList.remove('open');
+    panel.removeAttribute('role');
+    panel.removeAttribute('aria-modal');
+    panel.removeAttribute('aria-label');
+    document.body.classList.remove('auth-panel-open');
+    document.querySelectorAll('.mobile-auth-btn').forEach(button => {
+        button.setAttribute('aria-expanded', 'false');
+    });
+    if (authPanelTrigger instanceof HTMLElement) authPanelTrigger.focus();
+    authPanelTrigger = null;
+}
+
+function handleAuthPanelBackdrop(event) {
+    if (event.target === event.currentTarget) closeAuthPanel();
+}
+
 function clearFormInputs() {
     // Reset Sign In inputs
     const siEmail = document.getElementById('siEmail');
@@ -627,7 +666,12 @@ initQuoteSlideshow();
 ═══════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
-        closeForgot();
+        const forgotOverlay = document.getElementById('forgotOverlay');
+        if (forgotOverlay && forgotOverlay.classList.contains('open')) {
+            closeForgot();
+        } else {
+            closeAuthPanel();
+        }
     }
     if (e.key === 'Enter' && e.target instanceof HTMLInputElement) {
         const updateOverlay = document.getElementById('updatePasswordOverlay');
