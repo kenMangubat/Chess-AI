@@ -848,7 +848,7 @@
     <!-- NAVBAR -->
     <header class="navbar">
         <!-- LOGO (EXACT SVG FROM CHESSAI.HTML) -->
-        <a href="../chesslogin/chessai.html" class="brand" title="Chess-AI Home">
+        <a href="/" class="brand" title="Chess-AI Home">
             <div class="brand-icon">
                 <svg width="28" height="28" viewBox="0 0 460 520" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -1445,7 +1445,7 @@
 
         /* ══════════════════════════════════════════════
            SIGN OUT HANDLER
-           Sign out and return directly to ../chesslogin/chessai.html
+           Sign out and return to the site root login page
         ══════════════════════════════════════════════ */
         async function handleLogout() {
             const btn = document.getElementById('btnLogout');
@@ -1460,7 +1460,7 @@
                 console.warn('Sign out warning:', err);
             } finally {
                 setTimeout(() => {
-                    window.location.href = '../chesslogin/chessai.html';
+                    window.location.href = '/';
                 }, 400);
             }
         }
